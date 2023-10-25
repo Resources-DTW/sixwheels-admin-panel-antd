@@ -24,13 +24,15 @@ function CustomerComplatints() {
   return (
     <Space size={20} direction="vertical">
       <Typography.Title level={4}>Customer Complaints</Typography.Title>
-      <Input.Search
-        placeholder="Search here..."
-        onSearch={(value) => {
-          setSearchedText(value);
-        }}
-        onChange={(e) => setSearchedText(e.target.value)}
-      />
+      <Space direction="horizontal">
+        <Input.Search
+          placeholder="Search here..."
+          onSearch={(value) => {
+            setSearchedText(value);
+          }}
+          onChange={(e) => setSearchedText(e.target.value)}
+        />
+      </Space>
       <Table
         dataSource={dataSource}
         loading={loading}
