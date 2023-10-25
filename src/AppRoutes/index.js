@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import Dashboard from "../pages/Dashboard";
 import SubAdmin from "../pages/Sub Admin";
 import SubAdminPrivileges from "../pages/Sub Admin Privileges";
-import ServiceProviders from "../pages/Customer Complaints";
+import ServiceProviders from "../pages/Service Providers";
 import Drivers from "../pages/Drivers";
 import Customers from "../pages/Customers";
 import CustomerComplatints from "../pages/Customer Complaints";
