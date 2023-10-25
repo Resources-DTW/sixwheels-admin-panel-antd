@@ -70,6 +70,9 @@ function SubAdmin() {
           {
             title: "Name",
             dataIndex: "name",
+            sorter: (record1, record2) => {
+              return record1.name > record2.name;
+            },
           },
           {
             title: "User Name",

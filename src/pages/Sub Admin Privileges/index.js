@@ -48,10 +48,10 @@ function SubAdminPrivileges() {
       <Typography.Title level={4}>Sub Admin Privileges</Typography.Title>
       <div
         style={{
-          flexDirection: "row",
+          display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          width: "100%",
+          gap: 8,
         }}
       >
         <Input.Search
