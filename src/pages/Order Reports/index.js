@@ -50,15 +50,21 @@ function OrderReports() {
             },
           },
           {
+            title: "Service Provider Name",
+            dataIndex: "service_provider_name",
+            filteredValue: [searchedText],
+            onFilter: (value, record) => {
+              return String(record.service_provider_name)
+                .toLowerCase()
+                .includes(value.toLowerCase());
+            },
+          },
+          {
             title: "Service",
             dataIndex: "service",
             filteredValue: [searchedText],
-            filters: [
-              { text: "Water Service", value: true },
-              { text: "Sewage Service", value: false },
-            ],
-            onFilter: (value, record) => {
-              return record.service === value;
+            sorter: (record1, record2) => {
+              return record1.service > record2.service;
             },
             onFilter: (value, record) => {
               return String(record.service)
@@ -67,34 +73,11 @@ function OrderReports() {
             },
           },
           {
-            title: "Date",
-            dataIndex: "date",
-            filteredValue: [searchedText],
-            sorter: (record1, record2) => {
-              return record1.date > record2.date;
-            },
-            onFilter: (value, record) => {
-              return String(record.date)
-                .toLowerCase()
-                .includes(value.toLowerCase());
-            },
-          },
-          {
-            title: "Track Tanker",
-            dataIndex: "tracktanker",
+            title: "Cost",
+            dataIndex: "cost",
             filteredValue: [searchedText],
             onFilter: (value, record) => {
-              return String(record.tracktanker)
-                .toLowerCase()
-                .includes(value.toLowerCase());
-            },
-          },
-          {
-            title: "Customer Address",
-            dataIndex: "customeraddress",
-            filteredValue: [searchedText],
-            onFilter: (value, record) => {
-              return String(record.customeraddress)
+              return String(record.cost)
                 .toLowerCase()
                 .includes(value.toLowerCase());
             },
@@ -110,11 +93,31 @@ function OrderReports() {
             },
           },
           {
-            title: "Track",
-            dataIndex: "track",
+            title: "Start Date",
+            dataIndex: "startdate",
             filteredValue: [searchedText],
             onFilter: (value, record) => {
-              return String(record.track)
+              return String(record.startdate)
+                .toLowerCase()
+                .includes(value.toLowerCase());
+            },
+          },
+          {
+            title: "End Date",
+            dataIndex: "enddate",
+            filteredValue: [searchedText],
+            onFilter: (value, record) => {
+              return String(record.enddate)
+                .toLowerCase()
+                .includes(value.toLowerCase());
+            },
+          },
+          {
+            title: "Customer Address",
+            dataIndex: "customeraddress",
+            filteredValue: [searchedText],
+            onFilter: (value, record) => {
+              return String(record.customeraddress)
                 .toLowerCase()
                 .includes(value.toLowerCase());
             },
