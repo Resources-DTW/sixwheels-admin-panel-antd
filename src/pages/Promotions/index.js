@@ -1,8 +1,9 @@
-import { Button, Input, Space, Switch, Table, Typography } from "antd";
+import { Button, Input, Space, Table, Typography } from "antd";
 import ButtonGroup from "antd/es/button/button-group";
 import { useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
 import { MdOutlineDeleteOutline } from "react-icons/md";
+import { AiOutlinePlus } from "react-icons/ai";
 
 function Promotions() {
   const [loading, setLoading] = useState(false);
@@ -45,7 +46,17 @@ function Promotions() {
             onChange={(e) => setSearchedText(e.target.value)}
           />
         </Space>
-        <Button type="default">Add New</Button>
+        <Button
+          type="default"
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+            display: "flex",
+            gap: 5,
+          }}
+        >
+          <AiOutlinePlus /> Add New
+        </Button>
       </div>
       <Table
         style={{ width: "100%" }}
