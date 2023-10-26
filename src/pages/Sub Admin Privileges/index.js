@@ -51,7 +51,8 @@ function SubAdminPrivileges() {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          gap: 8,
+          width: "100%",
+          gap: 200,
         }}
       >
         <Input.Search
@@ -64,6 +65,7 @@ function SubAdminPrivileges() {
         <Button type="primary">Save</Button>
       </div>
       <Table
+        style={{ width: "100%" }}
         dataSource={dataSource}
         loading={loading}
         pagination={false}
