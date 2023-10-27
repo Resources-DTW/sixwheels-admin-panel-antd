@@ -114,25 +114,11 @@ function ReviewPage() {
             title: "Actions",
             render: () => (
               <ButtonGroup>
-                <Button
-                  style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 5,
-                  }}
-                >
-                  <FaRegEdit size={16} />
+                <Button size="small">
+                  <FaRegEdit size={12} />
                 </Button>
-                <Button
-                  type="primary"
-                  danger
-                  style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 5,
-                  }}
-                >
-                  <MdOutlineDeleteOutline size={16} />
+                <Button type="primary" danger size="small">
+                  <MdOutlineDeleteOutline size={12} />
                 </Button>
               </ButtonGroup>
             ),

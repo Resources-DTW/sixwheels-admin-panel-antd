@@ -10,8 +10,7 @@ function Drivers() {
   const [searchedText, setSearchedText] = useState("");
   const [dataSource, setDataSource] = useState([
     {
-      firstname: "Karthik",
-      lastname: "N",
+      name: "Karthik",
       dob: "10-06-2001",
       mobilenumber: "8807443477",
       email: "karthik.digitaltechworks@gmail.com",
@@ -20,8 +19,7 @@ function Drivers() {
       privacy_policy: "Accepted",
     },
     {
-      firstname: "Karthik",
-      lastname: "N",
+      name: "Karthik",
       dob: "10-06-2001",
       mobilenumber: "8807443477",
       email: "karthik.digitaltechworks@gmail.com",
@@ -30,8 +28,7 @@ function Drivers() {
       privacy_policy: "Accepted",
     },
     {
-      firstname: "Karthik",
-      lastname: "N",
+      name: "Karthik",
       dob: "10-06-2001",
       mobilenumber: "8807443477",
       email: "karthik.digitaltechworks@gmail.com",
@@ -40,8 +37,7 @@ function Drivers() {
       privacy_policy: "Accepted",
     },
     {
-      firstname: "Karthik",
-      lastname: "N",
+      name: "Karthik",
       dob: "10-06-2001",
       mobilenumber: "8807443477",
       email: "karthik.digitaltechworks@gmail.com",
@@ -50,8 +46,7 @@ function Drivers() {
       privacy_policy: "Accepted",
     },
     {
-      firstname: "Karthik",
-      lastname: "N",
+      name: "Karthik",
       dob: "10-06-2001",
       mobilenumber: "8807443477",
       email: "karthik.digitaltechworks@gmail.com",
@@ -60,8 +55,7 @@ function Drivers() {
       privacy_policy: "Accepted",
     },
     {
-      firstname: "Karthik",
-      lastname: "N",
+      name: "Karthik",
       dob: "10-06-2001",
       mobilenumber: "8807443477",
       email: "karthik.digitaltechworks@gmail.com",
@@ -70,8 +64,7 @@ function Drivers() {
       privacy_policy: "Accepted",
     },
     {
-      firstname: "Karthik",
-      lastname: "N",
+      name: "Karthik",
       dob: "10-06-2001",
       mobilenumber: "8807443477",
       email: "karthik.digitaltechworks@gmail.com",
@@ -80,8 +73,7 @@ function Drivers() {
       privacy_policy: "Accepted",
     },
     {
-      firstname: "Karthik",
-      lastname: "N",
+      name: "Karthik",
       dob: "10-06-2001",
       mobilenumber: "8807443477",
       email: "karthik.digitaltechworks@gmail.com",
@@ -90,8 +82,7 @@ function Drivers() {
       privacy_policy: "Accepted",
     },
     {
-      firstname: "Karthik",
-      lastname: "N",
+      name: "Karthik",
       dob: "10-06-2001",
       mobilenumber: "8807443477",
       email: "karthik.digitaltechworks@gmail.com",
@@ -100,8 +91,7 @@ function Drivers() {
       privacy_policy: "Accepted",
     },
     {
-      firstname: "Karthik",
-      lastname: "N",
+      name: "Karthik",
       dob: "10-06-2001",
       mobilenumber: "8807443477",
       email: "karthik.digitaltechworks@gmail.com",
@@ -131,21 +121,11 @@ function Drivers() {
         }}
         columns={[
           {
-            title: "First Name",
-            dataIndex: "firstname",
+            title: "Name",
+            dataIndex: "name",
             filteredValue: [searchedText],
             onFilter: (value, record) => {
-              return String(record.firstname)
-                .toLowerCase()
-                .includes(value.toLowerCase());
-            },
-          },
-          {
-            title: "Last Name",
-            dataIndex: "lastname",
-            filteredValue: [searchedText],
-            onFilter: (value, record) => {
-              return String(record.lastname)
+              return String(record.name)
                 .toLowerCase()
                 .includes(value.toLowerCase());
             },
@@ -214,34 +194,14 @@ function Drivers() {
             title: "Actions",
             render: () => (
               <ButtonGroup>
-                <Button
-                  style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 5,
-                  }}
-                >
-                  <FaRegEdit size={16} />
+                <Button size="small">
+                  <FaRegEdit size={12} />
                 </Button>
-                <Button
-                  style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 5,
-                  }}
-                >
-                  <GrMapLocation size={16} />
+                <Button size="small">
+                  <GrMapLocation size={12} />
                 </Button>
-                <Button
-                  type="primary"
-                  danger
-                  style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 5,
-                  }}
-                >
-                  <MdOutlineDeleteOutline size={16} />
+                <Button type="primary" danger size="small">
+                  <MdOutlineDeleteOutline size={12} />
                 </Button>
               </ButtonGroup>
             ),

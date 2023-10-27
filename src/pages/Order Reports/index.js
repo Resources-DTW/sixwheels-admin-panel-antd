@@ -1,22 +1,99 @@
-import { Input, Space, Table, Typography } from "antd";
+import {
+  Input,
+  Space,
+  Table,
+  Typography,
+  Select,
+  DatePicker,
+  Button,
+} from "antd";
 import { useState } from "react";
 
 function OrderReports() {
   const [loading, setLoading] = useState(false);
   const [searchedText, setSearchedText] = useState("");
+  const { RangePicker } = DatePicker;
+  const onChange = (value, dateString) => {
+    console.log("Selected Time: ", value);
+    console.log("Formatted Selected Time: ", dateString);
+  };
+  const onOk = (value) => {
+    console.log("onOk: ", value);
+  };
 
   return (
     <Space size={20} direction="vertical">
-      <Typography.Title level={4}>Live Orders</Typography.Title>
-      <Space direction="horizontal">
-        <Input.Search
-          placeholder="Search here..."
-          onSearch={(value) => {
-            setSearchedText(value);
-          }}
-          onChange={(e) => setSearchedText(e.target.value)}
-        />
-      </Space>
+      <Typography.Title level={4}>Order Reports</Typography.Title>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          width: "100%",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <Space direction="horizontal">
+          <Input.Search
+            placeholder="Search here..."
+            onSearch={(value) => {
+              setSearchedText(value);
+            }}
+            onChange={(e) => setSearchedText(e.target.value)}
+          />
+        </Space>
+        <Space direction="horizontal">
+          <Select
+            defaultValue="Select Status"
+            style={{
+              width: 120,
+            }}
+            options={[
+              {
+                value: "new",
+                label: "New",
+              },
+              {
+                value: "delivered",
+                label: "Delivered",
+              },
+              {
+                value: "rejected",
+                label: "Rejected",
+              },
+            ]}
+          />
+          <Select
+            defaultValue="Tanker Type"
+            style={{
+              width: 120,
+            }}
+            options={[
+              {
+                value: "sewage",
+                label: "Sewage Tank",
+              },
+              {
+                value: "water",
+                label: "Water Tank",
+              },
+              {
+                value: "both",
+                label: "Both",
+              },
+            ]}
+          />
+          <RangePicker
+            showTime={{
+              format: "HH:mm",
+            }}
+            format="YYYY-MM-DD HH:mm"
+            onChange={onChange}
+            onOk={onOk}
+          />
+        </Space>
+        <Button type="primary">Search</Button>
+      </div>
       <Table
         loading={loading}
         pagination={{
