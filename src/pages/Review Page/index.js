@@ -202,10 +202,6 @@ function ReviewPage() {
                   value: "pending",
                   label: "Pending",
                 },
-                {
-                  value: "rejected",
-                  label: "Rejected",
-                },
               ]}
             />
           </Form.Item>
