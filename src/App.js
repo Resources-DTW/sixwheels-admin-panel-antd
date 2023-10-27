@@ -118,7 +118,7 @@ function App() {
             {
               key: "/customers",
               icon: <FaUsers />,
-              label: "Customer",
+              label: "Customers",
             },
             {
               key: "/customer_complaints",

@@ -8,6 +8,7 @@ import {
   Form,
   Switch,
   Select,
+  Modal,
 } from "antd";
 import ButtonGroup from "antd/es/button/button-group";
 import { useState } from "react";
@@ -20,6 +21,8 @@ function SubAdmin() {
   const [loading, setLoading] = useState(false);
   const [searchedText, setSearchedText] = useState("");
   const [addNew, setAddNew] = useState(false);
+  const [edit, setEdit] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [dataSource, setDataSource] = useState([
     {
       name: "Karthik",
@@ -97,6 +100,18 @@ function SubAdmin() {
     </Form.Item>
   );
 
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <Space size={20} direction="vertical">
       <Typography.Title level={4}>Sub Admin</Typography.Title>
@@ -170,11 +185,8 @@ function SubAdmin() {
           >
             <Input required type="email-address" />
           </Form.Item>
-          <Form.Item
-            label="Password"
-            rules={[{ required: true, min: 5, max: 99, type: "password" }]}
-          >
-            <Input type="password" required />
+          <Form.Item label="Password" name="password">
+            <Input.Password />
           </Form.Item>
           <Form.Item label="Is Active" valuePropName="checked">
             <Switch />
@@ -252,6 +264,9 @@ function SubAdmin() {
             render: () => (
               <ButtonGroup>
                 <Button
+                  onClick={() => {
+                    setEdit(true);
+                  }}
                   size="small"
                   style={{
                     alignItems: "center",
@@ -262,6 +277,7 @@ function SubAdmin() {
                   <FaRegEdit size={12} />
                 </Button>
                 <Button
+                  onClick={showModal}
                   size="small"
                   type="primary"
                   danger
@@ -278,6 +294,85 @@ function SubAdmin() {
           },
         ]}
       />
+      <Modal
+        title="Are you sure want to delete?"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={[
+          <Button type="default" onClick={handleCancel}>
+            Cancel
+          </Button>,
+          <Button type="primary" danger onClick={handleOk}>
+            Delete
+          </Button>,
+        ]}
+      >
+        <p>Click delete to remove</p>
+        {/* <p>Some contents...</p>
+        <p>Some contents...</p> */}
+      </Modal>
+      <Drawer
+        title="Edit Sub Admin"
+        open={edit}
+        onClose={() => {
+          setEdit(false);
+        }}
+      >
+        <Form
+          validateMessages={validateMessages}
+          layout="horizontal"
+          style={{
+            maxWidth: 900,
+          }}
+        >
+          <Form.Item label="Name" rules={[{ required: true, type: "name" }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="User Name"
+            rules={[{ required: true, type: "uname", min: 5, max: 99 }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item label="Phone Number">
+            <Input
+              addonBefore={prefixSelector}
+              style={{
+                width: "100%",
+              }}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Email Address"
+            rules={[{ required: true, type: "email" }]}
+          >
+            <Input required type="email-address" />
+          </Form.Item>
+          <Form.Item label="Is Active" valuePropName="checked">
+            <Switch />
+          </Form.Item>
+          <Form.Item>
+            <div
+              style={{
+                gap: 10,
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                alignItems: "center",
+                width: "100%",
+              }}
+            >
+              <Button type="primary" htmlType="submit">
+                Save
+              </Button>
+              <Button type="default" onClick={() => setEdit(false)}>
+                Cancel
+              </Button>
+            </div>
+          </Form.Item>
+        </Form>
+      </Drawer>
     </Space>
   );
 }

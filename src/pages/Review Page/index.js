@@ -1,4 +1,16 @@
-import { Button, Input, Rate, Space, Switch, Table, Typography } from "antd";
+import {
+  Button,
+  Drawer,
+  Form,
+  Input,
+  Modal,
+  Rate,
+  Select,
+  Space,
+  Switch,
+  Table,
+  Typography,
+} from "antd";
 import ButtonGroup from "antd/es/button/button-group";
 import { useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
@@ -7,6 +19,8 @@ import { MdOutlineDeleteOutline } from "react-icons/md";
 function ReviewPage() {
   const [loading, setLoading] = useState(false);
   const [searchedText, setSearchedText] = useState("");
+  const [edit, setEdit] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [dataSource, setDataSource] = useState([
     {
       users: "Karthik",
@@ -17,6 +31,18 @@ function ReviewPage() {
       status: "Resolved",
     },
   ]);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <Space size={20} direction="vertical">
@@ -114,10 +140,15 @@ function ReviewPage() {
             title: "Actions",
             render: () => (
               <ButtonGroup>
-                <Button size="small">
+                <Button
+                  onClick={() => {
+                    setEdit(true);
+                  }}
+                  size="small"
+                >
                   <FaRegEdit size={12} />
                 </Button>
-                <Button type="primary" danger size="small">
+                <Button onClick={showModal} type="primary" danger size="small">
                   <MdOutlineDeleteOutline size={12} />
                 </Button>
               </ButtonGroup>
@@ -125,6 +156,80 @@ function ReviewPage() {
           },
         ]}
       />
+      <Modal
+        title="Are you sure want to delete?"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={[
+          <Button type="default" onClick={handleCancel}>
+            Cancel
+          </Button>,
+          <Button type="primary" danger onClick={handleOk}>
+            Delete
+          </Button>,
+        ]}
+      >
+        <p>Click delete to remove</p>
+        {/* <p>Some contents...</p>
+        <p>Some contents...</p> */}
+      </Modal>
+      <Drawer
+        title="Update Review Status"
+        open={edit}
+        onClose={() => {
+          setEdit(false);
+        }}
+      >
+        <Form
+          layout="horizontal"
+          style={{
+            maxWidth: 900,
+          }}
+        >
+          <Form.Item label="Status" rules={[{ required: true }]}>
+            <Select
+              defaultValue="Select"
+              style={{
+                width: "100%",
+              }}
+              options={[
+                {
+                  value: "resolved",
+                  label: "Resolved",
+                },
+                {
+                  value: "pending",
+                  label: "Pending",
+                },
+                {
+                  value: "rejected",
+                  label: "Rejected",
+                },
+              ]}
+            />
+          </Form.Item>
+          <Form.Item>
+            <div
+              style={{
+                gap: 10,
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                alignItems: "center",
+                width: "100%",
+              }}
+            >
+              <Button type="primary" htmlType="submit">
+                Save
+              </Button>
+              <Button type="default" onClick={() => setEdit(false)}>
+                Cancel
+              </Button>
+            </div>
+          </Form.Item>
+        </Form>
+      </Drawer>
     </Space>
   );
 }
