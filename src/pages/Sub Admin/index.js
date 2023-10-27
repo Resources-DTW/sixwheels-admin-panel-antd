@@ -80,7 +80,6 @@ function SubAdmin() {
             onChange={(e) => setSearchedText(e.target.value)}
           />
         </Space>
-
         <Button
           type="default"
           style={{
