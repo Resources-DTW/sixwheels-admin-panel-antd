@@ -12,7 +12,7 @@ import {
   Typography,
 } from "antd";
 import ButtonGroup from "antd/es/button/button-group";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaRegEdit } from "react-icons/fa";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { GrMapLocation } from "react-icons/gr";
@@ -24,68 +24,27 @@ function Customer() {
   const [searchedText, setSearchedText] = useState("");
   const [edit, setEdit] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [dataSource, setDataSource] = useState([
-    {
-      firstname: "Karthik",
-      lastname: "N",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-    },
-    {
-      firstname: "Karthik",
-      lastname: "N",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-    },
-    {
-      firstname: "Karthik",
-      lastname: "N",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-    },
-    {
-      firstname: "Karthik",
-      lastname: "N",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-    },
-    {
-      firstname: "Karthik",
-      lastname: "N",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-    },
-    {
-      firstname: "Karthik",
-      lastname: "N",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-    },
-    {
-      firstname: "Karthik",
-      lastname: "N",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-    },
-    {
-      firstname: "Karthik",
-      lastname: "N",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-    },
-    {
-      firstname: "Karthik",
-      lastname: "N",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-    },
-    {
-      firstname: "Karthik",
-      lastname: "N",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-    },
-  ]);
+  const [dataSource, setDataSource] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("http://localhost:3000/api/users");
+      if (response.ok) {
+        const data = await response.json();
+        setDataSource(data);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch data when the component mounts.
+  useEffect(() => {
+    fetchData();
+  }, []); // The empty dependency array ensures this runs only once.
 
   /* eslint-disable no-template-curly-in-string */
   const validateMessages = {
@@ -146,30 +105,30 @@ function Customer() {
         columns={[
           {
             title: "First Name",
-            dataIndex: "firstname",
+            dataIndex: "firstName",
             filteredValue: [searchedText],
             onFilter: (value, record) => {
-              return String(record.firstname)
+              return String(record.firstName)
                 .toLowerCase()
                 .includes(value.toLowerCase());
             },
           },
           {
             title: "Last Name",
-            dataIndex: "lastname",
+            dataIndex: "lastName",
             filteredValue: [searchedText],
             onFilter: (value, record) => {
-              return String(record.lastname)
+              return String(record.lastName)
                 .toLowerCase()
                 .includes(value.toLowerCase());
             },
           },
           {
             title: "Mobile Number",
-            dataIndex: "mobilenumber",
+            dataIndex: "mobileNumber",
             filteredValue: [searchedText],
             onFilter: (value, record) => {
-              return String(record.mobilenumber)
+              return String(record.mobileNumber)
                 .toLowerCase()
                 .includes(value.toLowerCase());
             },

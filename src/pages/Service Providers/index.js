@@ -1,131 +1,30 @@
 import { Input, Space, Table, Typography } from "antd";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function ServiceProviders() {
   const [loading, setLoading] = useState(false);
   const [searchedText, setSearchedText] = useState("");
-  const [dataSource, setDataSource] = useState([
-    {
-      firstname: "Karthik",
-      lastname: "N",
-      type_of_service_offering: "Water Tank",
-      companynumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-      companyname: "Sixwheels Water Service",
-      company_cr_number: "CR-001",
-      companytiming: "10:00AM To 6:00PM",
-    },
-    {
-      firstname: "Karthik",
-      lastname: "N",
-      type_of_service_offering: "Water Tank",
-      companynumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-      companyname: "Sixwheels Water Service",
-      company_cr_number: "CR-002",
-      companytiming: "10:00AM To 6:00PM",
-    },
-    {
-      firstname: "Karthik",
-      lastname: "N",
-      type_of_service_offering: "Water Tank",
-      companynumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-      companyname: "Sixwheels Water Service",
-      company_cr_number: "CR-002",
-      companytiming: "10:00AM To 6:00PM",
-    },
-    {
-      firstname: "Karthik",
-      lastname: "N",
-      type_of_service_offering: "Water Tank",
-      companynumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-      companyname: "Sixwheels Water Service",
-      company_cr_number: "CR-002",
-      companytiming: "10:00AM To 6:00PM",
-    },
-    {
-      firstname: "Karthik",
-      lastname: "N",
-      type_of_service_offering: "Water Tank",
-      companynumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-      companyname: "Sixwheels Water Service",
-      company_cr_number: "CR-002",
-      companytiming: "10:00AM To 6:00PM",
-    },
-    {
-      firstname: "Karthik",
-      lastname: "N",
-      type_of_service_offering: "Water Tank",
-      companynumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-      companyname: "Sixwheels Water Service",
-      company_cr_number: "CR-002",
-      companytiming: "10:00AM To 6:00PM",
-    },
-    {
-      firstname: "Karthik",
-      lastname: "N",
-      type_of_service_offering: "Water Tank",
-      companynumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-      companyname: "Sixwheels Water Service",
-      company_cr_number: "CR-002",
-      companytiming: "10:00AM To 6:00PM",
-    },
-    {
-      firstname: "Karthik",
-      lastname: "N",
-      type_of_service_offering: "Water Tank",
-      companynumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-      companyname: "Sixwheels Water Service",
-      company_cr_number: "CR-002",
-      companytiming: "10:00AM To 6:00PM",
-    },
-    {
-      firstname: "Karthik",
-      lastname: "N",
-      type_of_service_offering: "Water Tank",
-      companynumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-      companyname: "Sixwheels Water Service",
-      company_cr_number: "CR-002",
-      companytiming: "10:00AM To 6:00PM",
-    },
-    {
-      firstname: "Karthik",
-      lastname: "N",
-      type_of_service_offering: "Water Tank",
-      companynumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-      companyname: "Sixwheels Water Service",
-      company_cr_number: "CR-002",
-      companytiming: "10:00AM To 6:00PM",
-    },
-    {
-      firstname: "Karthik",
-      lastname: "N",
-      type_of_service_offering: "Water Tank",
-      companynumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-      companyname: "Sixwheels Water Service",
-      company_cr_number: "CR-002",
-      companytiming: "10:00AM To 6:00PM",
-    },
-    {
-      firstname: "Karthik",
-      lastname: "N",
-      type_of_service_offering: "Water Tank",
-      companynumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-      companyname: "Sixwheels Water Service",
-      company_cr_number: "CR-002",
-      companytiming: "10:00AM To 6:00PM",
-    },
-  ]);
+  const [dataSource, setDataSource] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("http://localhost:3000/provider");
+      if (response.ok) {
+        const data = await response.json();
+        setDataSource(data);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch data when the component mounts.
+  useEffect(() => {
+    fetchData();
+  }, []); // The empty dependency array ensures this runs only once.
 
   return (
     <Space size={20} direction="vertical">
@@ -148,40 +47,40 @@ function ServiceProviders() {
         columns={[
           {
             title: "First Name",
-            dataIndex: "firstname",
+            dataIndex: "firstName",
             filteredValue: [searchedText],
             onFilter: (value, record) => {
-              return String(record.firstname)
+              return String(record.firstName)
                 .toLowerCase()
                 .includes(value.toLowerCase());
             },
           },
           {
             title: "Last Name",
-            dataIndex: "lastname",
+            dataIndex: "lastName",
             filteredValue: [searchedText],
             onFilter: (value, record) => {
-              return String(record.lastname)
+              return String(record.lastName)
                 .toLowerCase()
                 .includes(value.toLowerCase());
             },
           },
           {
             title: "Type of service offering",
-            dataIndex: "type_of_service_offering",
+            dataIndex: "services",
             filteredValue: [searchedText],
             onFilter: (value, record) => {
-              return String(record.type_of_service_offering)
+              return String(record.services)
                 .toLowerCase()
                 .includes(value.toLowerCase());
             },
           },
           {
             title: "Company Contact Number",
-            dataIndex: "companynumber",
+            dataIndex: "mobileNumber",
             filteredValue: [searchedText],
             onFilter: (value, record) => {
-              return String(record.companynumber)
+              return String(record.mobileNumber)
                 .toLowerCase()
                 .includes(value.toLowerCase());
             },
@@ -198,30 +97,30 @@ function ServiceProviders() {
           },
           {
             title: "Company Name",
-            dataIndex: "companyname",
+            dataIndex: "companyName",
             filteredValue: [searchedText],
             onFilter: (value, record) => {
-              return String(record.companyname)
+              return String(record.companyName)
                 .toLowerCase()
                 .includes(value.toLowerCase());
             },
           },
           {
             title: "Company CR Number",
-            dataIndex: "company_cr_number",
+            dataIndex: "companyCR",
             filteredValue: [searchedText],
             onFilter: (value, record) => {
-              return String(record.company_cr_number)
+              return String(record.companyCR)
                 .toLowerCase()
                 .includes(value.toLowerCase());
             },
           },
           {
             title: "Company Timing",
-            dataIndex: "companytiming",
+            dataIndex: "companyTiming",
             filteredValue: [searchedText],
             onFilter: (value, record) => {
-              return String(record.companytiming)
+              return String(record.companyTiming)
                 .toLowerCase()
                 .includes(value.toLowerCase());
             },

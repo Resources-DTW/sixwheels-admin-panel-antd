@@ -12,7 +12,7 @@ import {
   DatePicker,
 } from "antd";
 import ButtonGroup from "antd/es/button/button-group";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaRegEdit } from "react-icons/fa";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { GrMapLocation } from "react-icons/gr";
@@ -23,98 +23,39 @@ function Drivers() {
   const [searchedText, setSearchedText] = useState("");
   const [edit, setEdit] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [dataSource, setDataSource] = useState([
-    {
-      name: "Karthik",
-      dob: "10-06-2001",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-      license: "TN192873126398",
-      service_provider_name: "Sixwheels Water Service",
-      privacy_policy: "Accepted",
-    },
-    {
-      name: "Karthik",
-      dob: "10-06-2001",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-      license: "TN192873126398",
-      service_provider_name: "Sixwheels Water Service",
-      privacy_policy: "Accepted",
-    },
-    {
-      name: "Karthik",
-      dob: "10-06-2001",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-      license: "TN192873126398",
-      service_provider_name: "Sixwheels Water Service",
-      privacy_policy: "Accepted",
-    },
-    {
-      name: "Karthik",
-      dob: "10-06-2001",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-      license: "TN192873126398",
-      service_provider_name: "Sixwheels Water Service",
-      privacy_policy: "Accepted",
-    },
-    {
-      name: "Karthik",
-      dob: "10-06-2001",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-      license: "TN192873126398",
-      service_provider_name: "Sixwheels Water Service",
-      privacy_policy: "Accepted",
-    },
-    {
-      name: "Karthik",
-      dob: "10-06-2001",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-      license: "TN192873126398",
-      service_provider_name: "Sixwheels Water Service",
-      privacy_policy: "Accepted",
-    },
-    {
-      name: "Karthik",
-      dob: "10-06-2001",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-      license: "TN192873126398",
-      service_provider_name: "Sixwheels Water Service",
-      privacy_policy: "Accepted",
-    },
-    {
-      name: "Karthik",
-      dob: "10-06-2001",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-      license: "TN192873126398",
-      service_provider_name: "Sixwheels Water Service",
-      privacy_policy: "Accepted",
-    },
-    {
-      name: "Karthik",
-      dob: "10-06-2001",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-      license: "TN192873126398",
-      service_provider_name: "Sixwheels Water Service",
-      privacy_policy: "Accepted",
-    },
-    {
-      name: "Karthik",
-      dob: "10-06-2001",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-      license: "TN192873126398",
-      service_provider_name: "Sixwheels Water Service",
-      privacy_policy: "Accepted",
-    },
-  ]);
+  const [dataSource, setDataSource] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("http://localhost:3000/drivers");
+      if (response.ok) {
+        const data = await response.json();
+        setDataSource(data);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteDriver = async (_id) => {
+    try {
+      await fetch(`http://localhost:3000/drivers/${_id}`, {
+        method: "DELETE",
+      });
+      fetchData(); // Refresh the list of drivers after deletion
+      setIsModalOpen(false); // Close the delete confirmation modal
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  // Fetch data when the component mounts.
+  useEffect(() => {
+    fetchData();
+  }, []); // The empty dependency array ensures this runs only once.
 
   /* eslint-disable no-template-curly-in-string */
   const validateMessages = {
@@ -147,7 +88,7 @@ function Drivers() {
   };
 
   const handleOk = () => {
-    setIsModalOpen(false);
+    deleteDriver();
   };
 
   const handleCancel = () => {
@@ -179,30 +120,30 @@ function Drivers() {
         columns={[
           {
             title: "Name",
-            dataIndex: "name",
+            dataIndex: "firstName",
             filteredValue: [searchedText],
             onFilter: (value, record) => {
-              return String(record.name)
+              return String(record.firstName)
                 .toLowerCase()
                 .includes(value.toLowerCase());
             },
           },
           {
             title: "Date Of Birth",
-            dataIndex: "dob",
+            dataIndex: "dateOfBirth",
             filteredValue: [searchedText],
             onFilter: (value, record) => {
-              return String(record.dob)
+              return String(record.dateOfBirth)
                 .toLowerCase()
                 .includes(value.toLowerCase());
             },
           },
           {
             title: "Mobile Number",
-            dataIndex: "mobilenumber",
+            dataIndex: "mobileNumber",
             filteredValue: [searchedText],
             onFilter: (value, record) => {
-              return String(record.mobilenumber)
+              return String(record.mobileNumber)
                 .toLowerCase()
                 .includes(value.toLowerCase());
             },
@@ -229,20 +170,20 @@ function Drivers() {
           },
           {
             title: "Service Provider Name",
-            dataIndex: "service_provider_name",
+            dataIndex: "serviceProvider",
             filteredValue: [searchedText],
             onFilter: (value, record) => {
-              return String(record.service_provider_name)
+              return String(record.serviceProvider)
                 .toLowerCase()
                 .includes(value.toLowerCase());
             },
           },
           {
             title: "Privacy Policy Status",
-            dataIndex: "privacy_policy",
+            dataIndex: "policyAccepted",
             filteredValue: [searchedText],
             onFilter: (value, record) => {
-              return String(record.privacy_policy)
+              return String(record.policyAccepted)
                 .toLowerCase()
                 .includes(value.toLowerCase());
             },

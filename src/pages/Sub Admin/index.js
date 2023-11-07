@@ -11,11 +11,12 @@ import {
   Modal,
 } from "antd";
 import ButtonGroup from "antd/es/button/button-group";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { AiOutlinePlus } from "react-icons/ai";
 import { Option } from "antd/es/mentions";
+import axios from "axios";
 
 function SubAdmin() {
   const [loading, setLoading] = useState(false);
@@ -23,56 +24,51 @@ function SubAdmin() {
   const [addNew, setAddNew] = useState(false);
   const [edit, setEdit] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [dataSource, setDataSource] = useState([
-    {
-      name: "Karthik",
-      username: "karthik",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-    },
-    {
-      name: "Karthik",
-      username: "karthik",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-    },
-    {
-      name: "Karthik",
-      username: "karthik",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-    },
-    {
-      name: "Karthik",
-      username: "karthik",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-    },
-    {
-      name: "Karthik",
-      username: "karthik",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-    },
-    {
-      name: "Karthik",
-      username: "karthik",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-    },
-    {
-      name: "Karthik",
-      username: "karthik",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-    },
-    {
-      name: "Karthik",
-      username: "karthik",
-      mobilenumber: "8807443477",
-      email: "karthik.digitaltechworks@gmail.com",
-    },
-  ]);
+  const [dataSource, setDataSource] = useState([]);
+
+  const addSubAdmin = async (values) => {
+    setLoading(true);
+    try {
+      const endpoint = "http://localhost:3000/api/registeradmin";
+      const data = values;
+
+      const response = await axios.post(endpoint, data);
+
+      if (response.status === 201) {
+        console.log(response);
+        setAddNew(false);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setAddNew(false);
+      setLoading(false);
+    }
+  };
+
+  useCallback(() => {
+    addSubAdmin();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("http://localhost:3000/subadmin");
+      if (response.ok) {
+        const data = await response.json();
+        setDataSource(data);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch data when the component mounts.
+  useEffect(() => {
+    fetchData();
+  }, []); // The empty dependency array ensures this runs only once.
 
   /* eslint-disable no-template-curly-in-string */
   const validateMessages = {
@@ -158,37 +154,49 @@ function SubAdmin() {
         <Form
           validateMessages={validateMessages}
           layout="horizontal"
+          onFinish={addSubAdmin}
           style={{
             maxWidth: 900,
           }}
         >
-          <Form.Item label="Name" rules={[{ required: true, type: "name" }]}>
+          <Form.Item
+            name="name"
+            label="Name"
+            rules={[{ required: true, type: "name" }]}
+          >
             <Input />
           </Form.Item>
           <Form.Item
+            name="userName"
             label="User Name"
             rules={[{ required: true, type: "uname", min: 5, max: 99 }]}
           >
             <Input />
           </Form.Item>
-          <Form.Item label="Phone Number">
+          <Form.Item name="phoneNumber" label="Phone Number">
             <Input
               addonBefore={prefixSelector}
+              maxLength={10}
               style={{
                 width: "100%",
               }}
             />
           </Form.Item>
           <Form.Item
+            name="email"
             label="Email Address"
             rules={[{ required: true, type: "email" }]}
           >
             <Input required type="email-address" />
           </Form.Item>
-          <Form.Item label="Password" name="password">
+          <Form.Item
+            label="Password"
+            name="password"
+            rules={[{ required: true }]}
+          >
             <Input.Password />
           </Form.Item>
-          <Form.Item label="Is Active" valuePropName="checked">
+          <Form.Item name="isActive" label="Is Active" valuePropName="checked">
             <Switch />
           </Form.Item>
           <Form.Item>
@@ -222,29 +230,35 @@ function SubAdmin() {
           {
             title: "Name",
             dataIndex: "name",
+            filteredValue: [searchedText],
             sorter: (record1, record2) => {
               return record1.name > record2.name;
             },
-          },
-          {
-            title: "User Name",
-            dataIndex: "username",
-            sorter: (record1, record2) => {
-              return record1.username > record2.username;
-            },
-            filteredValue: [searchedText],
             onFilter: (value, record) => {
-              return String(record.username)
+              return String(record.name)
                 .toLowerCase()
                 .includes(value.toLowerCase());
             },
           },
           {
-            title: "Mobile Number",
-            dataIndex: "mobilenumber",
+            title: "User Name",
+            dataIndex: "userName",
+            sorter: (record1, record2) => {
+              return record1.userName > record2.userName;
+            },
             filteredValue: [searchedText],
             onFilter: (value, record) => {
-              return String(record.mobilenumber)
+              return String(record.userName)
+                .toLowerCase()
+                .includes(value.toLowerCase());
+            },
+          },
+          {
+            title: "Phone Number",
+            dataIndex: "phoneNumber",
+            filteredValue: [searchedText],
+            onFilter: (value, record) => {
+              return String(record.phoneNumber)
                 .toLowerCase()
                 .includes(value.toLowerCase());
             },

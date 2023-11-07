@@ -12,11 +12,12 @@ import {
   Modal,
 } from "antd";
 import ButtonGroup from "antd/es/button/button-group";
-import { useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { FaRegEdit } from "react-icons/fa";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { AiOutlinePlus } from "react-icons/ai";
 import { UploadOutlined } from "@ant-design/icons";
+import axios from "axios";
 
 function Promotions() {
   const [loading, setLoading] = useState(false);
@@ -24,22 +25,52 @@ function Promotions() {
   const [addNew, setAddNew] = useState(false);
   const [edit, setEdit] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [dataSource, setDataSource] = useState([
-    {
-      offername: "Offer-1",
-      tankertype: "Water Tank",
-      tankercapacity: "300 Litre",
-      discounttype: "Amount",
-      discountvalue: "10%",
-    },
-    {
-      offername: "Offer-2",
-      tankertype: "Sewwage Tank",
-      tankercapacity: "100 Litre",
-      discounttype: "Amount",
-      discountvalue: "10%",
-    },
-  ]);
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [dataSource, setDataSource] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("http://localhost:3000/promotions");
+      if (response.ok) {
+        const data = await response.json();
+        setDataSource(data);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const addPromotions = async (values) => {
+    setLoading(true);
+    try {
+      const endpoint = "http://localhost:3000/promotions";
+      const data = values;
+
+      const response = await axios.post(endpoint, data);
+
+      if (response.status === 200) {
+        console.log(response);
+        setAddNew(false);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setAddNew(false);
+      setLoading(false);
+    }
+  };
+
+  useCallback(() => {
+    addPromotions();
+  }, []);
+
+  // Fetch data when the component mounts.
+  useEffect(() => {
+    fetchData();
+  }, []); // The empty dependency array ensures this runs only once.
 
   /* eslint-disable no-template-curly-in-string */
   const validateMessages = {
@@ -50,14 +81,6 @@ function Promotions() {
     },
   };
   /* eslint-enable no-template-curly-in-string */
-
-  const normFile = (e) => {
-    console.log("Upload event:", e);
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e?.fileList;
-  };
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -70,6 +93,17 @@ function Promotions() {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+
+  const normFile = (e) => {
+    console.log("Upload event:", e);
+    if (Array.isArray(e)) {
+      return e;
+    }
+    return e?.fileList;
+  };
+  // const onFinish = (values) => {
+  //   console.log("Received values of form: ", values);
+  // };
 
   return (
     <Space size={20} direction="vertical">
@@ -117,17 +151,23 @@ function Promotions() {
         <Form
           validateMessages={validateMessages}
           layout="horizontal"
+          onFinish={addPromotions}
           style={{
             maxWidth: 900,
           }}
         >
           <Form.Item
             label="Offer Name"
-            rules={[{ required: true, type: "offername" }]}
+            name="offerName"
+            rules={[{ required: true, type: String }]}
           >
-            <Input />
+            <Input name="offerName" />
           </Form.Item>
-          <Form.Item label="Tanker Capacity" rules={[{ required: true }]}>
+          <Form.Item
+            label="Tanker Type"
+            name="tankerType"
+            rules={[{ required: true }]}
+          >
             <Select
               defaultValue="Select"
               style={{
@@ -135,24 +175,39 @@ function Promotions() {
               }}
               options={[
                 {
-                  value: "sewage",
+                  value: "Sewage Tank",
                   label: "Sewage Tank",
                 },
                 {
-                  value: "water",
+                  value: "Water Tank",
                   label: "Water Tank",
                 },
                 {
-                  value: "both",
+                  value: "Both",
                   label: "Both",
                 },
               ]}
             />
           </Form.Item>
-          <Form.Item label="Discount Type" rules={[{ required: true }]}>
+          <Form.Item
+            label="Tanker Capacity"
+            name="tankerCapacity"
+            rules={[{ required: true }]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item label="Discount Value" rules={[{ required: true }]}>
+          <Form.Item
+            label="Discount Type"
+            name="discountType"
+            rules={[{ required: true }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Discount Value"
+            name="discountValue"
+            rules={[{ required: true }]}
+          >
             <Input />
           </Form.Item>
           <Form.Item
@@ -162,12 +217,12 @@ function Promotions() {
             getValueFromEvent={normFile}
             // extra="longgggggggggggggggggggggggggggggggggg"
           >
-            <Upload name="logo" action="/upload.do" listType="picture">
+            <Upload name="imagePath" action="/upload.do" listType="picture">
               <Button icon={<UploadOutlined />}>Click to upload</Button>
             </Upload>
           </Form.Item>
-          <Form.Item label="Is Active" valuePropName="checked">
-            <Switch />
+          <Form.Item label="Is Active" name="isActive" valuePropName="checked">
+            <Switch name="isActive" />
           </Form.Item>
           <Form.Item>
             <div
@@ -194,69 +249,71 @@ function Promotions() {
         style={{ width: "100%" }}
         dataSource={dataSource}
         loading={loading}
-        pagination={false}
+        pagination={{
+          pageSize: 6,
+        }}
         columns={[
           {
             title: "Offer Name",
-            dataIndex: "offername",
+            dataIndex: "offerName",
             sorter: (record1, record2) => {
-              return record1.offername > record2.offername;
+              return record1.offerName > record2.offerName;
             },
             filteredValue: [searchedText],
             onFilter: (value, record) => {
-              return String(record.offername)
+              return String(record.offerName)
                 .toLowerCase()
                 .includes(value.toLowerCase());
             },
           },
           {
             title: "Tanker Type",
-            dataIndex: "tankertype",
+            dataIndex: "tankerType",
             sorter: (record1, record2) => {
-              return record1.tankertype > record2.tankertype;
+              return record1.tankerType > record2.tankerType;
             },
             filteredValue: [searchedText],
             onFilter: (value, record) => {
-              return String(record.tankertype)
+              return String(record.tankerType)
                 .toLowerCase()
                 .includes(value.toLowerCase());
             },
           },
           {
             title: "Tanker Capacity",
-            dataIndex: "tankercapacity",
+            dataIndex: "tankerCapacity",
             sorter: (record1, record2) => {
-              return record1.tankercapacity > record2.tankercapacity;
+              return record1.tankerCapacity > record2.tankerCapacity;
             },
             filteredValue: [searchedText],
             onFilter: (value, record) => {
-              return String(record.tankercapacity)
+              return String(record.tankerCapacity)
                 .toLowerCase()
                 .includes(value.toLowerCase());
             },
           },
           {
             title: "Discount Type",
-            dataIndex: "discounttype",
+            dataIndex: "discountType",
             sorter: (record1, record2) => {
-              return record1.discounttype > record2.discounttype;
+              return record1.discountType > record2.discountType;
             },
             filteredValue: [searchedText],
             onFilter: (value, record) => {
-              return String(record.discounttype)
+              return String(record.discountType)
                 .toLowerCase()
                 .includes(value.toLowerCase());
             },
           },
           {
             title: "Discount Value",
-            dataIndex: "discountvalue",
+            dataIndex: "discountValue",
             sorter: (record1, record2) => {
-              return record1.discountvalue > record2.discountvalue;
+              return record1.discountValue > record2.discountValue;
             },
             filteredValue: [searchedText],
             onFilter: (value, record) => {
-              return String(record.discountvalue)
+              return String(record.discountValue)
                 .toLowerCase()
                 .includes(value.toLowerCase());
             },
@@ -315,13 +372,15 @@ function Promotions() {
         >
           <Form.Item
             label="Offer Name"
-            rules={[{ required: true, type: "offername" }]}
+            rules={[{ required: true, type: "offerName" }]}
           >
             <Input />
           </Form.Item>
-          <Form.Item label="Tanker Capacity" rules={[{ required: true }]}>
+          <Form.Item label="Tanker Type" rules={[{ required: true }]}>
             <Select
               defaultValue="Select"
+              value={selectedOption}
+              onChange={(value) => setSelectedOption(value)}
               style={{
                 width: "100%",
               }}
@@ -341,6 +400,9 @@ function Promotions() {
               ]}
             />
           </Form.Item>
+          <Form.Item label="Tanker Capacity" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
           <Form.Item label="Discount Type" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
@@ -348,7 +410,7 @@ function Promotions() {
             <Input />
           </Form.Item>
           <Form.Item
-            name="upload"
+            name="imagePath"
             label="Image Path"
             valuePropName="fileList"
             getValueFromEvent={normFile}
