@@ -1,15 +1,13 @@
 import {
   Button,
-  DatePicker,
   Drawer,
   Form,
   Input,
-  Modal,
   Select,
   Space,
-  Switch,
   Table,
   Typography,
+  Popconfirm,
 } from "antd";
 import ButtonGroup from "antd/es/button/button-group";
 import { useState, useEffect } from "react";
@@ -18,13 +16,19 @@ import { MdOutlineDeleteOutline } from "react-icons/md";
 import { GrMapLocation } from "react-icons/gr";
 import { HiShoppingCart } from "react-icons/hi";
 import { Option } from "antd/es/mentions";
+import axios from "axios";
 
 function Customer() {
   const [loading, setLoading] = useState(false);
   const [searchedText, setSearchedText] = useState("");
   const [edit, setEdit] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [dataSource, setDataSource] = useState([]);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    mobileNumber: "",
+    email: "",
+  });
 
   const fetchData = async () => {
     try {
@@ -39,6 +43,35 @@ function Customer() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      setLoading(true);
+      const response = await axios.delete(
+        `http://localhost:3000/api/users/${id}`
+      );
+      if (response.status === 200) {
+        setLoading(false);
+        fetchData();
+        console.log(response);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEdit = (user) => {
+    setEdit(true);
+    setFormData({
+      firstName: user.firstName || "",
+      lastName: user.lastName || "",
+      mobileNumber: user.mobileNumber || "",
+      email: user.email || "",
+    });
+    console.log(user);
   };
 
   // Fetch data when the component mounts.
@@ -71,18 +104,6 @@ function Customer() {
       </Select>
     </Form.Item>
   );
-
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
 
   return (
     <Space size={20} direction="vertical">
@@ -145,14 +166,9 @@ function Customer() {
           },
           {
             title: "Actions",
-            render: () => (
+            render: (_, record) => (
               <ButtonGroup>
-                <Button
-                  onClick={() => {
-                    setEdit(true);
-                  }}
-                  size="small"
-                >
+                <Button onClick={() => handleEdit(record)} size="small">
                   <FaRegEdit size={12} />
                 </Button>
                 <Button size="small">
@@ -161,32 +177,22 @@ function Customer() {
                 <Button size="small">
                   <HiShoppingCart size={12} />
                 </Button>
-                <Button onClick={showModal} size="small" type="primary" danger>
-                  <MdOutlineDeleteOutline size={12} />
-                </Button>
+                <Popconfirm
+                  title="Are you sure want to delete?"
+                  onConfirm={() => handleDelete(record._id)}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <Button size="small" type="primary" danger>
+                    <MdOutlineDeleteOutline size={12} />
+                  </Button>
+                </Popconfirm>
               </ButtonGroup>
             ),
           },
         ]}
       />
-      <Modal
-        title="Are you sure want to delete?"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        footer={[
-          <Button type="default" onClick={handleCancel}>
-            Cancel
-          </Button>,
-          <Button type="primary" danger onClick={handleOk}>
-            Delete
-          </Button>,
-        ]}
-      >
-        <p>Click delete to remove</p>
-        {/* <p>Some contents...</p>
-        <p>Some contents...</p> */}
-      </Modal>
+
       <Drawer
         title="Edit Driver"
         open={edit}
@@ -205,16 +211,30 @@ function Customer() {
             label="First Name"
             rules={[{ required: true, type: "fname" }]}
           >
-            <Input />
+            <Input
+              value={formData.firstName}
+              onChange={(e) =>
+                setFormData({ ...formData, firstName: e.target.value })
+              }
+            />
           </Form.Item>
           <Form.Item
             label="Last Name"
             rules={[{ required: true, type: "lname" }]}
           >
-            <Input />
+            <Input
+              value={formData.lastName}
+              onChange={(e) =>
+                setFormData({ ...formData, lastName: e.target.value })
+              }
+            />
           </Form.Item>
           <Form.Item label="Mobile Number">
             <Input
+              value={formData.mobileNumber}
+              onChange={(e) =>
+                setFormData({ ...formData, mobileNumber: e.target.value })
+              }
               addonBefore={prefixSelector}
               style={{
                 width: "100%",
@@ -225,7 +245,14 @@ function Customer() {
             label="Email ID"
             rules={[{ required: true, type: "email" }]}
           >
-            <Input required type="email-address" />
+            <Input
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              required
+              type="email-address"
+            />
           </Form.Item>
           <Form.Item>
             <div

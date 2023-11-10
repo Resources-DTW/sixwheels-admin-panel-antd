@@ -8,10 +8,10 @@ import {
   Form,
   Switch,
   Select,
-  Modal,
+  Popconfirm,
 } from "antd";
 import ButtonGroup from "antd/es/button/button-group";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { AiOutlinePlus } from "react-icons/ai";
@@ -23,8 +23,15 @@ function SubAdmin() {
   const [searchedText, setSearchedText] = useState("");
   const [addNew, setAddNew] = useState(false);
   const [edit, setEdit] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [dataSource, setDataSource] = useState([]);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [formData, setFormData] = useState({
+    name: "",
+    userName: "",
+    phoneNumber: "",
+    emailAddress: "",
+    isActive: false,
+  });
 
   const addSubAdmin = async (values) => {
     setLoading(true);
@@ -35,7 +42,7 @@ function SubAdmin() {
       const response = await axios.post(endpoint, data);
 
       if (response.status === 201) {
-        console.log(response);
+        // console.log(response);
         setAddNew(false);
       }
     } catch (error) {
@@ -44,11 +51,8 @@ function SubAdmin() {
       setAddNew(false);
       setLoading(false);
     }
+    forceUpdate();
   };
-
-  useCallback(() => {
-    addSubAdmin();
-  }, []);
 
   const fetchData = async () => {
     try {
@@ -64,11 +68,6 @@ function SubAdmin() {
       setLoading(false);
     }
   };
-
-  // Fetch data when the component mounts.
-  useEffect(() => {
-    fetchData();
-  }, []); // The empty dependency array ensures this runs only once.
 
   /* eslint-disable no-template-curly-in-string */
   const validateMessages = {
@@ -96,17 +95,64 @@ function SubAdmin() {
     </Form.Item>
   );
 
-  const showModal = () => {
-    setIsModalOpen(true);
+  const handleDelete = async (id) => {
+    try {
+      setLoading(true);
+      const response = await axios.delete(
+        `http://localhost:3000/subadmin/${id}`
+      );
+      if (response.status === 200) {
+        setLoading(false);
+        fetchData();
+        console.log(response);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleOk = () => {
-    setIsModalOpen(false);
+  const handleEdit = (user) => {
+    setEdit(true);
+    setFormData({
+      name: user.name || "",
+      userName: user.userName || "",
+      phoneNumber: user.phoneNumber || "",
+      email: user.email || "",
+      isActive: user.isActive || false,
+    });
+    // console.log(user);
   };
 
-  const handleCancel = () => {
-    setIsModalOpen(false);
+  const handleUpdate = async () => {
+    try {
+      setLoading(true);
+      const userId = formData._id;
+
+      const response = await axios.put(
+        `http://localhost:3000/subadmin/${userId}`,
+        formData
+      );
+
+      if (response.status === 200) {
+        // Handle success, e.g., show a success message
+        console.log("User updated successfully");
+      }
+    } catch (error) {
+      // Handle errors, e.g., show an error message
+      console.error("Error updating user:", error.response);
+    } finally {
+      setLoading(false);
+      setEdit(false);
+      // You may want to refresh the data or perform other actions after the update
+    }
   };
+
+  // Fetch data when the component mounts.
+  useEffect(() => {
+    fetchData();
+  }, [ignored]); // The empty dependency array ensures this runs only once.
 
   return (
     <Space size={20} direction="vertical">
@@ -130,9 +176,7 @@ function SubAdmin() {
           />
         </Space>
         <Button
-          onClick={() => {
-            setAddNew(true);
-          }}
+          onClick={() => setAddNew(true)}
           type="default"
           style={{
             alignItems: "center",
@@ -275,12 +319,11 @@ function SubAdmin() {
           },
           {
             title: "Actions",
-            render: () => (
+            dataIndex: "_id",
+            render: (_, record) => (
               <ButtonGroup>
                 <Button
-                  onClick={() => {
-                    setEdit(true);
-                  }}
+                  onClick={() => handleEdit(record)}
                   size="small"
                   style={{
                     alignItems: "center",
@@ -290,42 +333,30 @@ function SubAdmin() {
                 >
                   <FaRegEdit size={12} />
                 </Button>
-                <Button
-                  onClick={showModal}
-                  size="small"
-                  type="primary"
-                  danger
-                  style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 5,
-                  }}
+                <Popconfirm
+                  title="Are you sure want to delete?"
+                  onConfirm={() => handleDelete(record._id)}
+                  okText="Yes"
+                  cancelText="No"
                 >
-                  <MdOutlineDeleteOutline size={12} />
-                </Button>
+                  <Button
+                    size="small"
+                    type="primary"
+                    danger
+                    style={{
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 5,
+                    }}
+                  >
+                    <MdOutlineDeleteOutline size={12} />
+                  </Button>
+                </Popconfirm>
               </ButtonGroup>
             ),
           },
         ]}
       />
-      <Modal
-        title="Are you sure want to delete?"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        footer={[
-          <Button type="default" onClick={handleCancel}>
-            Cancel
-          </Button>,
-          <Button type="primary" danger onClick={handleOk}>
-            Delete
-          </Button>,
-        ]}
-      >
-        <p>Click delete to remove</p>
-        {/* <p>Some contents...</p>
-        <p>Some contents...</p> */}
-      </Modal>
       <Drawer
         title="Edit Sub Admin"
         open={edit}
@@ -336,21 +367,37 @@ function SubAdmin() {
         <Form
           validateMessages={validateMessages}
           layout="horizontal"
+          onFinish={handleUpdate}
           style={{
             maxWidth: 900,
           }}
         >
           <Form.Item label="Name" rules={[{ required: true, type: "name" }]}>
-            <Input />
+            <Input
+              value={formData.name}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+            />
           </Form.Item>
           <Form.Item
             label="User Name"
             rules={[{ required: true, type: "uname", min: 5, max: 99 }]}
           >
-            <Input />
+            <Input
+              value={formData.userName}
+              onChange={(e) =>
+                setFormData({ ...formData, userName: e.target.value })
+              }
+            />
           </Form.Item>
           <Form.Item label="Phone Number">
             <Input
+              maxLength={10}
+              value={formData.phoneNumber}
+              onChange={(e) =>
+                setFormData({ ...formData, phoneNumber: e.target.value })
+              }
               addonBefore={prefixSelector}
               style={{
                 width: "100%",
@@ -361,7 +408,14 @@ function SubAdmin() {
             label="Email Address"
             rules={[{ required: true, type: "email" }]}
           >
-            <Input required type="email-address" />
+            <Input
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              required
+              type="email-address"
+            />
           </Form.Item>
           <Form.Item label="Is Active" valuePropName="checked">
             <Switch />

@@ -4,26 +4,35 @@ import {
   Space,
   Table,
   Typography,
-  Modal,
   Drawer,
   Form,
   Switch,
   Select,
   DatePicker,
+  Popconfirm,
 } from "antd";
 import ButtonGroup from "antd/es/button/button-group";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 import { FaRegEdit } from "react-icons/fa";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { GrMapLocation } from "react-icons/gr";
 import { Option } from "antd/es/mentions";
+import axios from "axios";
 
 function Drivers() {
   const [loading, setLoading] = useState(false);
   const [searchedText, setSearchedText] = useState("");
   const [edit, setEdit] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [dataSource, setDataSource] = useState([]);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    dateOfBirth: "",
+    mobileNumber: "",
+    email: "",
+    license: "",
+    serviceProvider: "",
+  });
 
   const fetchData = async () => {
     try {
@@ -38,18 +47,38 @@ function Drivers() {
     } finally {
       setLoading(false);
     }
+    forceUpdate();
   };
 
-  const deleteDriver = async (_id) => {
+  const handleDelete = async (id) => {
     try {
-      await fetch(`http://localhost:3000/drivers/${_id}`, {
-        method: "DELETE",
-      });
-      fetchData(); // Refresh the list of drivers after deletion
-      setIsModalOpen(false); // Close the delete confirmation modal
+      setLoading(true);
+      const response = await axios.delete(
+        `http://localhost:3000/drivers/${id}`
+      );
+      if (response.status === 200) {
+        setLoading(false);
+        fetchData();
+        console.log(response);
+      }
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.log(error);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleEdit = (user) => {
+    setEdit(true);
+    setFormData({
+      firstName: user.firstName || "",
+      dateOfBirth: user.dateOfBirth || "",
+      mobileNumber: user.mobileNumber || "",
+      email: user.email || "",
+      license: user.license || "",
+      serviceProvider: user.serviceProvider || "",
+    });
+    console.log(user);
   };
 
   // Fetch data when the component mounts.
@@ -82,18 +111,6 @@ function Drivers() {
       </Select>
     </Form.Item>
   );
-
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleOk = () => {
-    deleteDriver();
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
 
   const onChange = (date, dateString) => {
     console.log(date, dateString);
@@ -190,45 +207,29 @@ function Drivers() {
           },
           {
             title: "Actions",
-            render: () => (
+            render: (_, record) => (
               <ButtonGroup>
-                <Button
-                  onClick={() => {
-                    setEdit(true);
-                  }}
-                  size="small"
-                >
+                <Button onClick={() => handleEdit(record)} size="small">
                   <FaRegEdit size={12} />
                 </Button>
                 <Button size="small">
                   <GrMapLocation size={12} />
                 </Button>
-                <Button onClick={showModal} type="primary" danger size="small">
-                  <MdOutlineDeleteOutline size={12} />
-                </Button>
+                <Popconfirm
+                  title="Are you sure want to delete?"
+                  onConfirm={() => handleDelete(record._id)}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <Button type="primary" danger size="small">
+                    <MdOutlineDeleteOutline size={12} />
+                  </Button>
+                </Popconfirm>
               </ButtonGroup>
             ),
           },
         ]}
       />
-      <Modal
-        title="Are you sure want to delete?"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        footer={[
-          <Button type="default" onClick={handleCancel}>
-            Cancel
-          </Button>,
-          <Button type="primary" danger onClick={handleOk}>
-            Delete
-          </Button>,
-        ]}
-      >
-        <p>Click delete to remove</p>
-        {/* <p>Some contents...</p>
-        <p>Some contents...</p> */}
-      </Modal>
       <Drawer
         title="Edit Driver"
         open={edit}
@@ -243,14 +244,23 @@ function Drivers() {
             maxWidth: 900,
           }}
         >
-          <Form.Item label="Name" rules={[{ required: true, type: "name" }]}>
-            <Input />
+          <Form.Item label="Name" rules={[{ required: true }]}>
+            <Input
+              value={formData.firstName}
+              onChange={(e) =>
+                setFormData({ ...formData, firstName: e.target.value })
+              }
+            />
           </Form.Item>
           <Form.Item label="Date Of Birth">
             <DatePicker onChange={onChange} />
           </Form.Item>
           <Form.Item label="Mobile Number">
             <Input
+              value={formData.mobileNumber}
+              onChange={(e) =>
+                setFormData({ ...formData, mobileNumber: e.target.value })
+              }
               addonBefore={prefixSelector}
               style={{
                 width: "100%",
@@ -261,10 +271,22 @@ function Drivers() {
             label="Email ID"
             rules={[{ required: true, type: "email" }]}
           >
-            <Input required type="email-address" />
+            <Input
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              required
+              type="email-address"
+            />
           </Form.Item>
           <Form.Item label="License No">
-            <Input />
+            <Input
+              value={formData.license}
+              onChange={(e) =>
+                setFormData({ ...formData, license: e.target.value })
+              }
+            />
           </Form.Item>
           <Form.Item label="Service Provider Name" rules={[{ required: true }]}>
             <Select

@@ -9,10 +9,10 @@ import {
   Typography,
   Select,
   Upload,
-  Modal,
+  Popconfirm,
 } from "antd";
 import ButtonGroup from "antd/es/button/button-group";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useReducer } from "react";
 import { FaRegEdit } from "react-icons/fa";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { AiOutlinePlus } from "react-icons/ai";
@@ -24,9 +24,16 @@ function Promotions() {
   const [searchedText, setSearchedText] = useState("");
   const [addNew, setAddNew] = useState(false);
   const [edit, setEdit] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
   const [dataSource, setDataSource] = useState([]);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [formData, setFormData] = useState({
+    offerName: "",
+    tankerType: "",
+    tankerCapacity: "",
+    discountType: "",
+    discountValue: "",
+  });
 
   const fetchData = async () => {
     try {
@@ -38,6 +45,25 @@ function Promotions() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+    forceUpdate();
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      setLoading(true);
+      const response = await axios.delete(
+        `http://localhost:3000/promotions/${id}`
+      );
+      if (response.status === 200) {
+        setLoading(false);
+        fetchData();
+        console.log(response);
+      }
+    } catch (error) {
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -61,6 +87,19 @@ function Promotions() {
       setAddNew(false);
       setLoading(false);
     }
+    forceUpdate();
+  };
+
+  const handleEdit = (user) => {
+    setEdit(true);
+    setFormData({
+      offerName: user.offerName || "",
+      tankerType: user.tankerType || "",
+      tankerCapacity: user.tankerCapacity || "",
+      discountType: user.discountType || "",
+      discountValue: user.discountValue || "",
+    });
+    console.log(user);
   };
 
   useCallback(() => {
@@ -81,18 +120,6 @@ function Promotions() {
     },
   };
   /* eslint-enable no-template-curly-in-string */
-
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
 
   const normFile = (e) => {
     console.log("Upload event:", e);
@@ -320,42 +347,26 @@ function Promotions() {
           },
           {
             title: "Actions",
-            render: () => (
+            render: (_text, record) => (
               <ButtonGroup>
-                <Button
-                  onClick={() => {
-                    setEdit(true);
-                  }}
-                  size="small"
-                >
+                <Button onClick={() => handleEdit(record)} size="small">
                   <FaRegEdit size={12} />
                 </Button>
-                <Button onClick={showModal} type="primary" danger size="small">
-                  <MdOutlineDeleteOutline size={12} />
-                </Button>
+                <Popconfirm
+                  title="Are you sure want to delete?"
+                  onConfirm={() => handleDelete(record._id)}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <Button type="primary" danger size="small">
+                    <MdOutlineDeleteOutline size={12} />
+                  </Button>
+                </Popconfirm>
               </ButtonGroup>
             ),
           },
         ]}
       />
-      <Modal
-        title="Are you sure want to delete?"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        footer={[
-          <Button type="default" onClick={handleCancel}>
-            Cancel
-          </Button>,
-          <Button type="primary" danger onClick={handleOk}>
-            Delete
-          </Button>,
-        ]}
-      >
-        <p>Click delete to remove</p>
-        {/* <p>Some contents...</p>
-        <p>Some contents...</p> */}
-      </Modal>
       <Drawer
         title="Edit Promotion"
         open={edit}
@@ -374,7 +385,12 @@ function Promotions() {
             label="Offer Name"
             rules={[{ required: true, type: "offerName" }]}
           >
-            <Input />
+            <Input
+              value={formData.offerName}
+              onChange={(e) =>
+                setFormData({ ...formData, offerName: e.target.value })
+              }
+            />
           </Form.Item>
           <Form.Item label="Tanker Type" rules={[{ required: true }]}>
             <Select
@@ -401,13 +417,28 @@ function Promotions() {
             />
           </Form.Item>
           <Form.Item label="Tanker Capacity" rules={[{ required: true }]}>
-            <Input />
+            <Input
+              value={formData.tankerCapacity}
+              onChange={(e) =>
+                setFormData({ ...formData, tankerCapacity: e.target.value })
+              }
+            />
           </Form.Item>
           <Form.Item label="Discount Type" rules={[{ required: true }]}>
-            <Input />
+            <Input
+              value={formData.discountType}
+              onChange={(e) =>
+                setFormData({ ...formData, discountType: e.target.value })
+              }
+            />
           </Form.Item>
           <Form.Item label="Discount Value" rules={[{ required: true }]}>
-            <Input />
+            <Input
+              value={formData.discountValue}
+              onChange={(e) =>
+                setFormData({ ...formData, discountValue: e.target.value })
+              }
+            />
           </Form.Item>
           <Form.Item
             name="imagePath"
