@@ -1,5 +1,6 @@
 {
   "name": "sixwheels_admin_panel",
+  "homepage": "https://digitaltechworks.com/sixwheels",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
