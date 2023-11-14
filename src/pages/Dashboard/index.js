@@ -65,7 +65,9 @@ function Dashboard() {
   const fetchCustomerCount = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/api/users");
+      const response = await fetch(
+        "https://rich-bass-cummerbund.cyclic.app/api/users"
+      );
       if (response.ok) {
         const data = await response.json();
         setCustomerCount(data);
@@ -80,7 +82,9 @@ function Dashboard() {
   const fetchProvidersCount = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/provider");
+      const response = await fetch(
+        "https://rich-bass-cummerbund.cyclic.app/provider"
+      );
       if (response.ok) {
         const data = await response.json();
         SetProvidersCount(data);

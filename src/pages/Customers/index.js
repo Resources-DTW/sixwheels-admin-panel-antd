@@ -33,7 +33,9 @@ function Customer() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/api/users");
+      const response = await fetch(
+        "https://rich-bass-cummerbund.cyclic.app/api/users"
+      );
       if (response.ok) {
         const data = await response.json();
         setDataSource(data);
@@ -49,7 +51,7 @@ function Customer() {
     try {
       setLoading(true);
       const response = await axios.delete(
-        `http://localhost:3000/api/users/${id}`
+        `https://rich-bass-cummerbund.cyclic.app/api/users/${id}`
       );
       if (response.status === 200) {
         setLoading(false);

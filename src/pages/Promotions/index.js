@@ -38,7 +38,9 @@ function Promotions() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/promotions");
+      const response = await fetch(
+        "https://rich-bass-cummerbund.cyclic.app/promotions"
+      );
       if (response.ok) {
         const data = await response.json();
         setDataSource(data);
@@ -55,7 +57,7 @@ function Promotions() {
     try {
       setLoading(true);
       const response = await axios.delete(
-        `http://localhost:3000/promotions/${id}`
+        `https://rich-bass-cummerbund.cyclic.app/promotions/${id}`
       );
       if (response.status === 200) {
         setLoading(false);
@@ -72,7 +74,7 @@ function Promotions() {
   const addPromotions = async (values) => {
     setLoading(true);
     try {
-      const endpoint = "http://localhost:3000/promotions";
+      const endpoint = "https://rich-bass-cummerbund.cyclic.app/promotions";
       const data = values;
 
       const response = await axios.post(endpoint, data);

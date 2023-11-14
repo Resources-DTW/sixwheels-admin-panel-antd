@@ -37,7 +37,7 @@ function Drivers() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/drivers");
+      const response = await fetch("https://rich-bass-cummerbund.cyclic.app/drivers");
       if (response.ok) {
         const data = await response.json();
         setDataSource(data);
@@ -54,7 +54,7 @@ function Drivers() {
     try {
       setLoading(true);
       const response = await axios.delete(
-        `http://localhost:3000/drivers/${id}`
+        `https://rich-bass-cummerbund.cyclic.app/drivers/${id}`
       );
       if (response.status === 200) {
         setLoading(false);

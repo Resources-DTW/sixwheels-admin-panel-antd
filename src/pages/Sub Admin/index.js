@@ -36,7 +36,7 @@ function SubAdmin() {
   const addSubAdmin = async (values) => {
     setLoading(true);
     try {
-      const endpoint = "http://localhost:3000/api/registeradmin";
+      const endpoint = "https://rich-bass-cummerbund.cyclic.app/api/registeradmin";
       const data = values;
 
       const response = await axios.post(endpoint, data);
@@ -57,7 +57,7 @@ function SubAdmin() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/subadmin");
+      const response = await fetch("https://rich-bass-cummerbund.cyclic.app/subadmin");
       if (response.ok) {
         const data = await response.json();
         setDataSource(data);
@@ -99,7 +99,7 @@ function SubAdmin() {
     try {
       setLoading(true);
       const response = await axios.delete(
-        `http://localhost:3000/subadmin/${id}`
+        `https://rich-bass-cummerbund.cyclic.app/subadmin/${id}`
       );
       if (response.status === 200) {
         setLoading(false);
@@ -131,7 +131,7 @@ function SubAdmin() {
       const userId = formData._id;
 
       const response = await axios.put(
-        `http://localhost:3000/subadmin/${userId}`,
+        `https://rich-bass-cummerbund.cyclic.app/subadmin/${userId}`,
         formData
       );
 

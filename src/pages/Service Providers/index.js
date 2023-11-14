@@ -9,7 +9,9 @@ function ServiceProviders() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/provider");
+      const response = await fetch(
+        "https://rich-bass-cummerbund.cyclic.app/provider"
+      );
       if (response.ok) {
         const data = await response.json();
         setDataSource(data);
