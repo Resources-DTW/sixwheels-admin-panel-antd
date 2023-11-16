@@ -10,6 +10,9 @@ import {
   Select,
   Upload,
   Popconfirm,
+  Layout,
+  Menu,
+  Image,
 } from "antd";
 import ButtonGroup from "antd/es/button/button-group";
 import { useEffect, useState, useCallback, useReducer } from "react";
@@ -18,6 +21,19 @@ import { MdOutlineDeleteOutline } from "react-icons/md";
 import { AiOutlinePlus } from "react-icons/ai";
 import { UploadOutlined } from "@ant-design/icons";
 import axios from "axios";
+import Logo from "../../assets/logo.png";
+import { BiHomeAlt2 } from "react-icons/bi";
+import { MdOutlineAdminPanelSettings, MdOutlinePayment } from "react-icons/md";
+import { BsCarFront, BsStarHalf, BsFillBuildingFill } from "react-icons/bs";
+import { FaUsers, FaUserSecret } from "react-icons/fa";
+import { FaTruckFast } from "react-icons/fa6";
+import { RiCustomerService2Line, RiAdvertisementLine } from "react-icons/ri";
+import { TbReportSearch } from "react-icons/tb";
+import { FiSettings } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
+import { Content, Footer } from "antd/es/layout/layout";
+import MainHeader from "../../components/MainHeader";
+import Sider from "antd/es/layout/Sider";
 
 function Promotions() {
   const [loading, setLoading] = useState(false);
@@ -34,6 +50,8 @@ function Promotions() {
     discountType: "",
     discountValue: "",
   });
+  const [collapsed, setCollapsed] = useState(false);
+  const navigate = useNavigate();
 
   const fetchData = async () => {
     try {
@@ -135,349 +153,469 @@ function Promotions() {
   // };
 
   return (
-    <Space size={20} direction="vertical">
-      <Typography.Title level={4}>Promotions</Typography.Title>
-      <div
+    <Layout className="container">
+      <Sider
         style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          width: "100%",
-          gap: 10,
+          backgroundColor: "#35A8DF",
+          // borderRadius: 16,
+          marginTop: -10,
+          marginLeft: -10,
         }}
+        trigger={null}
+        collapsible
+        collapsed={collapsed}
       >
-        <Space direction="horizontal">
-          <Input.Search
-            placeholder="Search here..."
-            onSearch={(value) => {
-              setSearchedText(value);
-            }}
-            onChange={(e) => setSearchedText(e.target.value)}
-          />
-        </Space>
-        <Button
-          onClick={() => {
-            setAddNew(true);
-          }}
-          type="default"
+        <Image
+          width={60}
+          src={Logo}
+          alt="Logo"
+          preview={false}
           style={{
-            alignItems: "center",
-            justifyContent: "center",
-            display: "flex",
-            gap: 5,
+            margin: 10,
           }}
-        >
-          <AiOutlinePlus /> Add New
-        </Button>
-      </div>
-      <Drawer
-        title="Add New Promotions"
-        open={addNew}
-        onClose={() => {
-          setAddNew(false);
-        }}
-      >
-        <Form
-          validateMessages={validateMessages}
-          layout="horizontal"
-          onFinish={addPromotions}
-          style={{
-            maxWidth: 900,
+        />
+        <Menu
+          style={{ backgroundColor: "#35A8DF", color: "white" }}
+          mode="inline"
+          defaultSelectedKeys={["/promotions"]}
+          onClick={(item) => {
+            navigate(item.key);
           }}
-        >
-          <Form.Item
-            label="Offer Name"
-            name="offerName"
-            rules={[{ required: true, type: String }]}
-          >
-            <Input name="offerName" />
-          </Form.Item>
-          <Form.Item
-            label="Tanker Type"
-            name="tankerType"
-            rules={[{ required: true }]}
-          >
-            <Select
-              defaultValue="Select"
-              style={{
-                width: "100%",
-              }}
-              options={[
-                {
-                  value: "Sewage Tank",
-                  label: "Sewage Tank",
-                },
-                {
-                  value: "Water Tank",
-                  label: "Water Tank",
-                },
-                {
-                  value: "Both",
-                  label: "Both",
-                },
-              ]}
-            />
-          </Form.Item>
-          <Form.Item
-            label="Tanker Capacity"
-            name="tankerCapacity"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Discount Type"
-            name="discountType"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Discount Value"
-            name="discountValue"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="upload"
-            label="Image Path"
-            valuePropName="fileList"
-            getValueFromEvent={normFile}
-            // extra="longgggggggggggggggggggggggggggggggggg"
-          >
-            <Upload name="imagePath" action="/upload.do" listType="picture">
-              <Button icon={<UploadOutlined />}>Click to upload</Button>
-            </Upload>
-          </Form.Item>
-          <Form.Item label="Is Active" name="isActive" valuePropName="checked">
-            <Switch name="isActive" />
-          </Form.Item>
-          <Form.Item>
+          items={[
+            {
+              key: "/",
+              icon: <BiHomeAlt2 />,
+              label: "Dashboard",
+            },
+            {
+              key: "/sub_admin",
+              icon: <FaUserSecret />,
+              label: "Sub Admin",
+            },
+            {
+              key: "/sub_admin_privileges",
+              icon: <MdOutlineAdminPanelSettings />,
+              label: "Sub Admin Privileges",
+            },
+            {
+              key: "/service_providers",
+              icon: <BsFillBuildingFill />,
+              label: "Service Providers",
+            },
+            {
+              key: "/drivers",
+              icon: <BsCarFront />,
+              label: "Drivers",
+            },
+            {
+              key: "/customers",
+              icon: <FaUsers />,
+              label: "Customers",
+            },
+            {
+              key: "/customer_complaints",
+              icon: <RiCustomerService2Line />,
+              label: "Customer Complaints",
+            },
+            {
+              key: "/live_orders",
+              icon: <FaTruckFast />,
+              label: "Live Orders",
+            },
+            {
+              key: "/order_reports",
+              icon: <TbReportSearch />,
+              label: "Order Reports",
+            },
+            {
+              key: "/promotions",
+              icon: <RiAdvertisementLine />,
+              label: "Promotion",
+            },
+            {
+              key: "/payment_method",
+              icon: <MdOutlinePayment />,
+              label: "Payment Method",
+            },
+            {
+              key: "/review_page",
+              icon: <BsStarHalf />,
+              label: "Review Page",
+            },
+            {
+              key: "/order_settings",
+              icon: <FiSettings />,
+              label: "Order Settings",
+            },
+          ]}
+        />
+      </Sider>
+      <Layout>
+        <MainHeader />
+        <Content className="content">
+          <Space size={20} direction="vertical">
+            <Typography.Title level={4}>Promotions</Typography.Title>
             <div
               style={{
-                gap: 10,
                 display: "flex",
-                flexDirection: "row",
-                justifyContent: "flex-end",
                 alignItems: "center",
+                justifyContent: "space-between",
                 width: "100%",
+                gap: 10,
               }}
             >
-              <Button type="primary" htmlType="submit">
-                Confirm
-              </Button>
-              <Button type="default" onClick={() => setAddNew(false)}>
-                Cancel
+              <Space direction="horizontal">
+                <Input.Search
+                  placeholder="Search here..."
+                  onSearch={(value) => {
+                    setSearchedText(value);
+                  }}
+                  onChange={(e) => setSearchedText(e.target.value)}
+                />
+              </Space>
+              <Button
+                onClick={() => {
+                  setAddNew(true);
+                }}
+                type="default"
+                style={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                  display: "flex",
+                  gap: 5,
+                }}
+              >
+                <AiOutlinePlus /> Add New
               </Button>
             </div>
-          </Form.Item>
-        </Form>
-      </Drawer>
-      <Table
-        style={{ width: "100%" }}
-        dataSource={dataSource}
-        loading={loading}
-        pagination={{
-          pageSize: 6,
-        }}
-        columns={[
-          {
-            title: "Offer Name",
-            dataIndex: "offerName",
-            sorter: (record1, record2) => {
-              return record1.offerName > record2.offerName;
-            },
-            filteredValue: [searchedText],
-            onFilter: (value, record) => {
-              return String(record.offerName)
-                .toLowerCase()
-                .includes(value.toLowerCase());
-            },
-          },
-          {
-            title: "Tanker Type",
-            dataIndex: "tankerType",
-            sorter: (record1, record2) => {
-              return record1.tankerType > record2.tankerType;
-            },
-            filteredValue: [searchedText],
-            onFilter: (value, record) => {
-              return String(record.tankerType)
-                .toLowerCase()
-                .includes(value.toLowerCase());
-            },
-          },
-          {
-            title: "Tanker Capacity",
-            dataIndex: "tankerCapacity",
-            sorter: (record1, record2) => {
-              return record1.tankerCapacity > record2.tankerCapacity;
-            },
-            filteredValue: [searchedText],
-            onFilter: (value, record) => {
-              return String(record.tankerCapacity)
-                .toLowerCase()
-                .includes(value.toLowerCase());
-            },
-          },
-          {
-            title: "Discount Type",
-            dataIndex: "discountType",
-            sorter: (record1, record2) => {
-              return record1.discountType > record2.discountType;
-            },
-            filteredValue: [searchedText],
-            onFilter: (value, record) => {
-              return String(record.discountType)
-                .toLowerCase()
-                .includes(value.toLowerCase());
-            },
-          },
-          {
-            title: "Discount Value",
-            dataIndex: "discountValue",
-            sorter: (record1, record2) => {
-              return record1.discountValue > record2.discountValue;
-            },
-            filteredValue: [searchedText],
-            onFilter: (value, record) => {
-              return String(record.discountValue)
-                .toLowerCase()
-                .includes(value.toLowerCase());
-            },
-          },
-          {
-            title: "Actions",
-            render: (_text, record) => (
-              <ButtonGroup>
-                <Button onClick={() => handleEdit(record)} size="small">
-                  <FaRegEdit size={12} />
-                </Button>
-                <Popconfirm
-                  title="Are you sure want to delete?"
-                  onConfirm={() => handleDelete(record._id)}
-                  okText="Yes"
-                  cancelText="No"
+            <Drawer
+              title="Add New Promotions"
+              open={addNew}
+              onClose={() => {
+                setAddNew(false);
+              }}
+            >
+              <Form
+                validateMessages={validateMessages}
+                layout="horizontal"
+                onFinish={addPromotions}
+                style={{
+                  maxWidth: 900,
+                }}
+              >
+                <Form.Item
+                  label="Offer Name"
+                  name="offerName"
+                  rules={[{ required: true, type: String }]}
                 >
-                  <Button type="primary" danger size="small">
-                    <MdOutlineDeleteOutline size={12} />
-                  </Button>
-                </Popconfirm>
-              </ButtonGroup>
-            ),
-          },
-        ]}
-      />
-      <Drawer
-        title="Edit Promotion"
-        open={edit}
-        onClose={() => {
-          setEdit(false);
-        }}
-      >
-        <Form
-          validateMessages={validateMessages}
-          layout="horizontal"
-          style={{
-            maxWidth: 900,
-          }}
-        >
-          <Form.Item
-            label="Offer Name"
-            rules={[{ required: true, type: "offerName" }]}
-          >
-            <Input
-              value={formData.offerName}
-              onChange={(e) =>
-                setFormData({ ...formData, offerName: e.target.value })
-              }
-            />
-          </Form.Item>
-          <Form.Item label="Tanker Type" rules={[{ required: true }]}>
-            <Select
-              defaultValue="Select"
-              value={selectedOption}
-              onChange={(value) => setSelectedOption(value)}
-              style={{
-                width: "100%",
+                  <Input name="offerName" />
+                </Form.Item>
+                <Form.Item
+                  label="Tanker Type"
+                  name="tankerType"
+                  rules={[{ required: true }]}
+                >
+                  <Select
+                    defaultValue="Select"
+                    style={{
+                      width: "100%",
+                    }}
+                    options={[
+                      {
+                        value: "Sewage Tank",
+                        label: "Sewage Tank",
+                      },
+                      {
+                        value: "Water Tank",
+                        label: "Water Tank",
+                      },
+                      {
+                        value: "Both",
+                        label: "Both",
+                      },
+                    ]}
+                  />
+                </Form.Item>
+                <Form.Item
+                  label="Tanker Capacity"
+                  name="tankerCapacity"
+                  rules={[{ required: true }]}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  label="Discount Type"
+                  name="discountType"
+                  rules={[{ required: true }]}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  label="Discount Value"
+                  name="discountValue"
+                  rules={[{ required: true }]}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  name="upload"
+                  label="Image Path"
+                  valuePropName="fileList"
+                  getValueFromEvent={normFile}
+                  // extra="longgggggggggggggggggggggggggggggggggg"
+                >
+                  <Upload
+                    name="imagePath"
+                    action="/upload.do"
+                    listType="picture"
+                  >
+                    <Button icon={<UploadOutlined />}>Click to upload</Button>
+                  </Upload>
+                </Form.Item>
+                <Form.Item
+                  label="Is Active"
+                  name="isActive"
+                  valuePropName="checked"
+                >
+                  <Switch name="isActive" />
+                </Form.Item>
+                <Form.Item>
+                  <div
+                    style={{
+                      gap: 10,
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "flex-end",
+                      alignItems: "center",
+                      width: "100%",
+                    }}
+                  >
+                    <Button type="primary" htmlType="submit">
+                      Confirm
+                    </Button>
+                    <Button type="default" onClick={() => setAddNew(false)}>
+                      Cancel
+                    </Button>
+                  </div>
+                </Form.Item>
+              </Form>
+            </Drawer>
+            <Table
+              style={{ width: "100%" }}
+              dataSource={dataSource}
+              loading={loading}
+              pagination={{
+                pageSize: 6,
               }}
-              options={[
+              columns={[
                 {
-                  value: "sewage",
-                  label: "Sewage Tank",
+                  title: "Offer Name",
+                  dataIndex: "offerName",
+                  sorter: (record1, record2) => {
+                    return record1.offerName > record2.offerName;
+                  },
+                  filteredValue: [searchedText],
+                  onFilter: (value, record) => {
+                    return String(record.offerName)
+                      .toLowerCase()
+                      .includes(value.toLowerCase());
+                  },
                 },
                 {
-                  value: "water",
-                  label: "Water Tank",
+                  title: "Tanker Type",
+                  dataIndex: "tankerType",
+                  sorter: (record1, record2) => {
+                    return record1.tankerType > record2.tankerType;
+                  },
+                  filteredValue: [searchedText],
+                  onFilter: (value, record) => {
+                    return String(record.tankerType)
+                      .toLowerCase()
+                      .includes(value.toLowerCase());
+                  },
                 },
                 {
-                  value: "both",
-                  label: "Both",
+                  title: "Tanker Capacity",
+                  dataIndex: "tankerCapacity",
+                  sorter: (record1, record2) => {
+                    return record1.tankerCapacity > record2.tankerCapacity;
+                  },
+                  filteredValue: [searchedText],
+                  onFilter: (value, record) => {
+                    return String(record.tankerCapacity)
+                      .toLowerCase()
+                      .includes(value.toLowerCase());
+                  },
+                },
+                {
+                  title: "Discount Type",
+                  dataIndex: "discountType",
+                  sorter: (record1, record2) => {
+                    return record1.discountType > record2.discountType;
+                  },
+                  filteredValue: [searchedText],
+                  onFilter: (value, record) => {
+                    return String(record.discountType)
+                      .toLowerCase()
+                      .includes(value.toLowerCase());
+                  },
+                },
+                {
+                  title: "Discount Value",
+                  dataIndex: "discountValue",
+                  sorter: (record1, record2) => {
+                    return record1.discountValue > record2.discountValue;
+                  },
+                  filteredValue: [searchedText],
+                  onFilter: (value, record) => {
+                    return String(record.discountValue)
+                      .toLowerCase()
+                      .includes(value.toLowerCase());
+                  },
+                },
+                {
+                  title: "Actions",
+                  render: (_text, record) => (
+                    <ButtonGroup>
+                      <Button onClick={() => handleEdit(record)} size="small">
+                        <FaRegEdit size={12} />
+                      </Button>
+                      <Popconfirm
+                        title="Are you sure want to delete?"
+                        onConfirm={() => handleDelete(record._id)}
+                        okText="Yes"
+                        cancelText="No"
+                      >
+                        <Button type="primary" danger size="small">
+                          <MdOutlineDeleteOutline size={12} />
+                        </Button>
+                      </Popconfirm>
+                    </ButtonGroup>
+                  ),
                 },
               ]}
             />
-          </Form.Item>
-          <Form.Item label="Tanker Capacity" rules={[{ required: true }]}>
-            <Input
-              value={formData.tankerCapacity}
-              onChange={(e) =>
-                setFormData({ ...formData, tankerCapacity: e.target.value })
-              }
-            />
-          </Form.Item>
-          <Form.Item label="Discount Type" rules={[{ required: true }]}>
-            <Input
-              value={formData.discountType}
-              onChange={(e) =>
-                setFormData({ ...formData, discountType: e.target.value })
-              }
-            />
-          </Form.Item>
-          <Form.Item label="Discount Value" rules={[{ required: true }]}>
-            <Input
-              value={formData.discountValue}
-              onChange={(e) =>
-                setFormData({ ...formData, discountValue: e.target.value })
-              }
-            />
-          </Form.Item>
-          <Form.Item
-            name="imagePath"
-            label="Image Path"
-            valuePropName="fileList"
-            getValueFromEvent={normFile}
-            // extra="longgggggggggggggggggggggggggggggggggg"
-          >
-            <Upload name="logo" action="/upload.do" listType="picture">
-              <Button icon={<UploadOutlined />}>Click to upload</Button>
-            </Upload>
-          </Form.Item>
-          <Form.Item label="Is Active" valuePropName="checked">
-            <Switch />
-          </Form.Item>
-          <Form.Item>
-            <div
-              style={{
-                gap: 10,
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "flex-end",
-                alignItems: "center",
-                width: "100%",
+            <Drawer
+              title="Edit Promotion"
+              open={edit}
+              onClose={() => {
+                setEdit(false);
               }}
             >
-              <Button type="primary" htmlType="submit">
-                Save
-              </Button>
-              <Button type="default" onClick={() => setEdit(false)}>
-                Cancel
-              </Button>
-            </div>
-          </Form.Item>
-        </Form>
-      </Drawer>
-    </Space>
+              <Form
+                validateMessages={validateMessages}
+                layout="horizontal"
+                style={{
+                  maxWidth: 900,
+                }}
+              >
+                <Form.Item
+                  label="Offer Name"
+                  rules={[{ required: true, type: "offerName" }]}
+                >
+                  <Input
+                    value={formData.offerName}
+                    onChange={(e) =>
+                      setFormData({ ...formData, offerName: e.target.value })
+                    }
+                  />
+                </Form.Item>
+                <Form.Item label="Tanker Type" rules={[{ required: true }]}>
+                  <Select
+                    defaultValue="Select"
+                    value={selectedOption}
+                    onChange={(value) => setSelectedOption(value)}
+                    style={{
+                      width: "100%",
+                    }}
+                    options={[
+                      {
+                        value: "sewage",
+                        label: "Sewage Tank",
+                      },
+                      {
+                        value: "water",
+                        label: "Water Tank",
+                      },
+                      {
+                        value: "both",
+                        label: "Both",
+                      },
+                    ]}
+                  />
+                </Form.Item>
+                <Form.Item label="Tanker Capacity" rules={[{ required: true }]}>
+                  <Input
+                    value={formData.tankerCapacity}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        tankerCapacity: e.target.value,
+                      })
+                    }
+                  />
+                </Form.Item>
+                <Form.Item label="Discount Type" rules={[{ required: true }]}>
+                  <Input
+                    value={formData.discountType}
+                    onChange={(e) =>
+                      setFormData({ ...formData, discountType: e.target.value })
+                    }
+                  />
+                </Form.Item>
+                <Form.Item label="Discount Value" rules={[{ required: true }]}>
+                  <Input
+                    value={formData.discountValue}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        discountValue: e.target.value,
+                      })
+                    }
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="imagePath"
+                  label="Image Path"
+                  valuePropName="fileList"
+                  getValueFromEvent={normFile}
+                  // extra="longgggggggggggggggggggggggggggggggggg"
+                >
+                  <Upload name="logo" action="/upload.do" listType="picture">
+                    <Button icon={<UploadOutlined />}>Click to upload</Button>
+                  </Upload>
+                </Form.Item>
+                <Form.Item label="Is Active" valuePropName="checked">
+                  <Switch />
+                </Form.Item>
+                <Form.Item>
+                  <div
+                    style={{
+                      gap: 10,
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "flex-end",
+                      alignItems: "center",
+                      width: "100%",
+                    }}
+                  >
+                    <Button type="primary" htmlType="submit">
+                      Save
+                    </Button>
+                    <Button type="default" onClick={() => setEdit(false)}>
+                      Cancel
+                    </Button>
+                  </div>
+                </Form.Item>
+              </Form>
+            </Drawer>
+          </Space>
+        </Content>
+        <Footer style={{ textAlign: "center" }} className="footer">
+          Copyrights © 2023 <strong>Sixwheels</strong>. All rights reserved
+        </Footer>
+      </Layout>
+    </Layout>
   );
 }
 

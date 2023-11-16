@@ -1,10 +1,13 @@
-import { Card, Divider, Space, Statistic, Table, Typography } from "antd";
-import { useState, useEffect } from "react";
+import { Space, Divider, Typography, Table, Card, Statistic } from "antd";
+import "../../App.css";
+import "../../styles/dashboard.css";
+import React, { useEffect, useState } from "react";
 import { PiCoinsThin } from "react-icons/pi";
 import { TbTruckDelivery } from "react-icons/tb";
 import { BsBox2 } from "react-icons/bs";
 import { HiOutlineUsers } from "react-icons/hi2";
 import { MdOutlineHomeRepairService } from "react-icons/md";
+// import ButtonGroup from "antd/es/button/button-group";
 
 function Dashboard() {
   const [loading, setLoading] = useState(false);

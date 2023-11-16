@@ -9,6 +9,9 @@ import {
   Switch,
   Select,
   Popconfirm,
+  Layout,
+  Menu,
+  Image,
 } from "antd";
 import ButtonGroup from "antd/es/button/button-group";
 import { useEffect, useReducer, useState } from "react";
@@ -17,6 +20,19 @@ import { MdOutlineDeleteOutline } from "react-icons/md";
 import { AiOutlinePlus } from "react-icons/ai";
 import { Option } from "antd/es/mentions";
 import axios from "axios";
+import { Content, Footer } from "antd/es/layout/layout";
+import MainHeader from "../../components/MainHeader";
+import Sider from "antd/es/layout/Sider";
+import { useNavigate } from "react-router-dom";
+import Logo from "../../assets/logo.png";
+import { BiHomeAlt2 } from "react-icons/bi";
+import { MdOutlineAdminPanelSettings, MdOutlinePayment } from "react-icons/md";
+import { BsCarFront, BsStarHalf, BsFillBuildingFill } from "react-icons/bs";
+import { FaUsers, FaUserSecret } from "react-icons/fa";
+import { FaTruckFast } from "react-icons/fa6";
+import { RiCustomerService2Line, RiAdvertisementLine } from "react-icons/ri";
+import { TbReportSearch } from "react-icons/tb";
+import { FiSettings } from "react-icons/fi";
 
 function SubAdmin() {
   const [loading, setLoading] = useState(false);
@@ -32,11 +48,14 @@ function SubAdmin() {
     emailAddress: "",
     isActive: false,
   });
+  const [collapsed, setCollapsed] = useState(false);
+  const navigate = useNavigate();
 
   const addSubAdmin = async (values) => {
     setLoading(true);
     try {
-      const endpoint = "https://rich-bass-cummerbund.cyclic.app/api/registeradmin";
+      const endpoint =
+        "https://rich-bass-cummerbund.cyclic.app/api/registeradmin";
       const data = values;
 
       const response = await axios.post(endpoint, data);
@@ -57,7 +76,9 @@ function SubAdmin() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await fetch("https://rich-bass-cummerbund.cyclic.app/subadmin");
+      const response = await fetch(
+        "https://rich-bass-cummerbund.cyclic.app/subadmin"
+      );
       if (response.ok) {
         const data = await response.json();
         setDataSource(data);
@@ -155,293 +176,406 @@ function SubAdmin() {
   }, [ignored]); // The empty dependency array ensures this runs only once.
 
   return (
-    <Space size={20} direction="vertical">
-      <Typography.Title level={4}>Sub Admin</Typography.Title>
-      <div
+    <Layout className="container">
+      <Sider
         style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          width: "100%",
-          gap: 10,
+          backgroundColor: "#35A8DF",
+          // borderRadius: 16,
+          marginTop: -10,
+          marginLeft: -10,
         }}
+        trigger={null}
+        collapsible
+        collapsed={collapsed}
       >
-        <Space direction="horizontal">
-          <Input.Search
-            placeholder="Search here..."
-            onSearch={(value) => {
-              setSearchedText(value);
-            }}
-            onChange={(e) => setSearchedText(e.target.value)}
-          />
-        </Space>
-        <Button
-          onClick={() => setAddNew(true)}
-          type="default"
+        <Image
+          width={60}
+          src={Logo}
+          alt="Logo"
+          preview={false}
           style={{
-            alignItems: "center",
-            justifyContent: "center",
-            display: "flex",
-            gap: 5,
+            margin: 10,
           }}
-        >
-          <AiOutlinePlus /> Add New
-        </Button>
-      </div>
-      <Drawer
-        title="Add New Sub Admin"
-        open={addNew}
-        onClose={() => {
-          setAddNew(false);
-        }}
-      >
-        <Form
-          validateMessages={validateMessages}
-          layout="horizontal"
-          onFinish={addSubAdmin}
-          style={{
-            maxWidth: 900,
+        />
+        <Menu
+          style={{ backgroundColor: "#35A8DF", color: "white" }}
+          mode="inline"
+          defaultSelectedKeys={["/sub_admin"]}
+          onClick={(item) => {
+            navigate(item.key);
           }}
-        >
-          <Form.Item
-            name="name"
-            label="Name"
-            rules={[{ required: true, type: "name" }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="userName"
-            label="User Name"
-            rules={[{ required: true, type: "uname", min: 5, max: 99 }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item name="phoneNumber" label="Phone Number">
-            <Input
-              addonBefore={prefixSelector}
-              maxLength={10}
-              style={{
-                width: "100%",
-              }}
-            />
-          </Form.Item>
-          <Form.Item
-            name="email"
-            label="Email Address"
-            rules={[{ required: true, type: "email" }]}
-          >
-            <Input required type="email-address" />
-          </Form.Item>
-          <Form.Item
-            label="Password"
-            name="password"
-            rules={[{ required: true }]}
-          >
-            <Input.Password />
-          </Form.Item>
-          <Form.Item name="isActive" label="Is Active" valuePropName="checked">
-            <Switch />
-          </Form.Item>
-          <Form.Item>
+          items={[
+            {
+              key: "/",
+              icon: <BiHomeAlt2 />,
+              label: "Dashboard",
+            },
+            {
+              key: "/sub_admin",
+              icon: <FaUserSecret />,
+              label: "Sub Admin",
+            },
+            {
+              key: "/sub_admin_privileges",
+              icon: <MdOutlineAdminPanelSettings />,
+              label: "Sub Admin Privileges",
+            },
+            {
+              key: "/service_providers",
+              icon: <BsFillBuildingFill />,
+              label: "Service Providers",
+            },
+            {
+              key: "/drivers",
+              icon: <BsCarFront />,
+              label: "Drivers",
+            },
+            {
+              key: "/customers",
+              icon: <FaUsers />,
+              label: "Customers",
+            },
+            {
+              key: "/customer_complaints",
+              icon: <RiCustomerService2Line />,
+              label: "Customer Complaints",
+            },
+            {
+              key: "/live_orders",
+              icon: <FaTruckFast />,
+              label: "Live Orders",
+            },
+            {
+              key: "/order_reports",
+              icon: <TbReportSearch />,
+              label: "Order Reports",
+            },
+            {
+              key: "/promotions",
+              icon: <RiAdvertisementLine />,
+              label: "Promotion",
+            },
+            {
+              key: "/payment_method",
+              icon: <MdOutlinePayment />,
+              label: "Payment Method",
+            },
+            {
+              key: "/review_page",
+              icon: <BsStarHalf />,
+              label: "Review Page",
+            },
+            {
+              key: "/order_settings",
+              icon: <FiSettings />,
+              label: "Order Settings",
+            },
+          ]}
+        />
+      </Sider>
+      <Layout>
+        <MainHeader />
+        <Content className="content">
+          <Space size={20} direction="vertical">
+            <Typography.Title level={4}>Sub Admin</Typography.Title>
             <div
               style={{
-                gap: 10,
                 display: "flex",
-                flexDirection: "row",
-                justifyContent: "flex-end",
                 alignItems: "center",
+                justifyContent: "space-between",
                 width: "100%",
+                gap: 10,
               }}
             >
-              <Button type="primary" htmlType="submit">
-                Confirm
-              </Button>
-              <Button type="default" onClick={() => setAddNew(false)}>
-                Cancel
+              <Space direction="horizontal">
+                <Input.Search
+                  placeholder="Search here..."
+                  onSearch={(value) => {
+                    setSearchedText(value);
+                  }}
+                  onChange={(e) => setSearchedText(e.target.value)}
+                />
+              </Space>
+              <Button
+                onClick={() => setAddNew(true)}
+                type="default"
+                style={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                  display: "flex",
+                  gap: 5,
+                }}
+              >
+                <AiOutlinePlus /> Add New
               </Button>
             </div>
-          </Form.Item>
-        </Form>
-      </Drawer>
-      <Table
-        dataSource={dataSource}
-        loading={loading}
-        pagination={{
-          pageSize: 6,
-        }}
-        columns={[
-          {
-            title: "Name",
-            dataIndex: "name",
-            filteredValue: [searchedText],
-            sorter: (record1, record2) => {
-              return record1.name > record2.name;
-            },
-            onFilter: (value, record) => {
-              return String(record.name)
-                .toLowerCase()
-                .includes(value.toLowerCase());
-            },
-          },
-          {
-            title: "User Name",
-            dataIndex: "userName",
-            sorter: (record1, record2) => {
-              return record1.userName > record2.userName;
-            },
-            filteredValue: [searchedText],
-            onFilter: (value, record) => {
-              return String(record.userName)
-                .toLowerCase()
-                .includes(value.toLowerCase());
-            },
-          },
-          {
-            title: "Phone Number",
-            dataIndex: "phoneNumber",
-            filteredValue: [searchedText],
-            onFilter: (value, record) => {
-              return String(record.phoneNumber)
-                .toLowerCase()
-                .includes(value.toLowerCase());
-            },
-          },
-          {
-            title: "Email ID",
-            dataIndex: "email",
-            filteredValue: [searchedText],
-            onFilter: (value, record) => {
-              return String(record.email)
-                .toLowerCase()
-                .includes(value.toLowerCase());
-            },
-          },
-          {
-            title: "Actions",
-            dataIndex: "_id",
-            render: (_, record) => (
-              <ButtonGroup>
-                <Button
-                  onClick={() => handleEdit(record)}
-                  size="small"
-                  style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 5,
-                  }}
+            <Drawer
+              title="Add New Sub Admin"
+              open={addNew}
+              onClose={() => {
+                setAddNew(false);
+              }}
+            >
+              <Form
+                validateMessages={validateMessages}
+                layout="horizontal"
+                onFinish={addSubAdmin}
+                style={{
+                  maxWidth: 900,
+                }}
+              >
+                <Form.Item
+                  name="name"
+                  label="Name"
+                  rules={[{ required: true, type: "name" }]}
                 >
-                  <FaRegEdit size={12} />
-                </Button>
-                <Popconfirm
-                  title="Are you sure want to delete?"
-                  onConfirm={() => handleDelete(record._id)}
-                  okText="Yes"
-                  cancelText="No"
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  name="userName"
+                  label="User Name"
+                  rules={[{ required: true, type: "uname", min: 5, max: 99 }]}
                 >
-                  <Button
-                    size="small"
-                    type="primary"
-                    danger
+                  <Input />
+                </Form.Item>
+                <Form.Item name="phoneNumber" label="Phone Number">
+                  <Input
+                    addonBefore={prefixSelector}
+                    maxLength={10}
                     style={{
+                      width: "100%",
+                    }}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="email"
+                  label="Email Address"
+                  rules={[{ required: true, type: "email" }]}
+                >
+                  <Input required type="email-address" />
+                </Form.Item>
+                <Form.Item
+                  label="Password"
+                  name="password"
+                  rules={[{ required: true }]}
+                >
+                  <Input.Password />
+                </Form.Item>
+                <Form.Item
+                  name="isActive"
+                  label="Is Active"
+                  valuePropName="checked"
+                >
+                  <Switch />
+                </Form.Item>
+                <Form.Item>
+                  <div
+                    style={{
+                      gap: 10,
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "flex-end",
                       alignItems: "center",
-                      justifyContent: "center",
-                      gap: 5,
+                      width: "100%",
                     }}
                   >
-                    <MdOutlineDeleteOutline size={12} />
-                  </Button>
-                </Popconfirm>
-              </ButtonGroup>
-            ),
-          },
-        ]}
-      />
-      <Drawer
-        title="Edit Sub Admin"
-        open={edit}
-        onClose={() => {
-          setEdit(false);
-        }}
-      >
-        <Form
-          validateMessages={validateMessages}
-          layout="horizontal"
-          onFinish={handleUpdate}
-          style={{
-            maxWidth: 900,
-          }}
-        >
-          <Form.Item label="Name" rules={[{ required: true, type: "name" }]}>
-            <Input
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-            />
-          </Form.Item>
-          <Form.Item
-            label="User Name"
-            rules={[{ required: true, type: "uname", min: 5, max: 99 }]}
-          >
-            <Input
-              value={formData.userName}
-              onChange={(e) =>
-                setFormData({ ...formData, userName: e.target.value })
-              }
-            />
-          </Form.Item>
-          <Form.Item label="Phone Number">
-            <Input
-              maxLength={10}
-              value={formData.phoneNumber}
-              onChange={(e) =>
-                setFormData({ ...formData, phoneNumber: e.target.value })
-              }
-              addonBefore={prefixSelector}
-              style={{
-                width: "100%",
+                    <Button type="primary" htmlType="submit">
+                      Confirm
+                    </Button>
+                    <Button type="default" onClick={() => setAddNew(false)}>
+                      Cancel
+                    </Button>
+                  </div>
+                </Form.Item>
+              </Form>
+            </Drawer>
+            <Table
+              dataSource={dataSource}
+              loading={loading}
+              pagination={{
+                pageSize: 6,
               }}
+              columns={[
+                {
+                  title: "Name",
+                  dataIndex: "name",
+                  filteredValue: [searchedText],
+                  sorter: (record1, record2) => {
+                    return record1.name > record2.name;
+                  },
+                  onFilter: (value, record) => {
+                    return String(record.name)
+                      .toLowerCase()
+                      .includes(value.toLowerCase());
+                  },
+                },
+                {
+                  title: "User Name",
+                  dataIndex: "userName",
+                  sorter: (record1, record2) => {
+                    return record1.userName > record2.userName;
+                  },
+                  filteredValue: [searchedText],
+                  onFilter: (value, record) => {
+                    return String(record.userName)
+                      .toLowerCase()
+                      .includes(value.toLowerCase());
+                  },
+                },
+                {
+                  title: "Phone Number",
+                  dataIndex: "phoneNumber",
+                  filteredValue: [searchedText],
+                  onFilter: (value, record) => {
+                    return String(record.phoneNumber)
+                      .toLowerCase()
+                      .includes(value.toLowerCase());
+                  },
+                },
+                {
+                  title: "Email ID",
+                  dataIndex: "email",
+                  filteredValue: [searchedText],
+                  onFilter: (value, record) => {
+                    return String(record.email)
+                      .toLowerCase()
+                      .includes(value.toLowerCase());
+                  },
+                },
+                {
+                  title: "Actions",
+                  dataIndex: "_id",
+                  render: (_, record) => (
+                    <ButtonGroup>
+                      <Button
+                        onClick={() => handleEdit(record)}
+                        size="small"
+                        style={{
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: 5,
+                        }}
+                      >
+                        <FaRegEdit size={12} />
+                      </Button>
+                      <Popconfirm
+                        title="Are you sure want to delete?"
+                        onConfirm={() => handleDelete(record._id)}
+                        okText="Yes"
+                        cancelText="No"
+                      >
+                        <Button
+                          size="small"
+                          type="primary"
+                          danger
+                          style={{
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: 5,
+                          }}
+                        >
+                          <MdOutlineDeleteOutline size={12} />
+                        </Button>
+                      </Popconfirm>
+                    </ButtonGroup>
+                  ),
+                },
+              ]}
             />
-          </Form.Item>
-          <Form.Item
-            label="Email Address"
-            rules={[{ required: true, type: "email" }]}
-          >
-            <Input
-              value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
-              required
-              type="email-address"
-            />
-          </Form.Item>
-          <Form.Item label="Is Active" valuePropName="checked">
-            <Switch />
-          </Form.Item>
-          <Form.Item>
-            <div
-              style={{
-                gap: 10,
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "flex-end",
-                alignItems: "center",
-                width: "100%",
+            <Drawer
+              title="Edit Sub Admin"
+              open={edit}
+              onClose={() => {
+                setEdit(false);
               }}
             >
-              <Button type="primary" htmlType="submit">
-                Save
-              </Button>
-              <Button type="default" onClick={() => setEdit(false)}>
-                Cancel
-              </Button>
-            </div>
-          </Form.Item>
-        </Form>
-      </Drawer>
-    </Space>
+              <Form
+                validateMessages={validateMessages}
+                layout="horizontal"
+                onFinish={handleUpdate}
+                style={{
+                  maxWidth: 900,
+                }}
+              >
+                <Form.Item
+                  label="Name"
+                  rules={[{ required: true, type: "name" }]}
+                >
+                  <Input
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
+                  />
+                </Form.Item>
+                <Form.Item
+                  label="User Name"
+                  rules={[{ required: true, type: "uname", min: 5, max: 99 }]}
+                >
+                  <Input
+                    value={formData.userName}
+                    onChange={(e) =>
+                      setFormData({ ...formData, userName: e.target.value })
+                    }
+                  />
+                </Form.Item>
+                <Form.Item label="Phone Number">
+                  <Input
+                    maxLength={10}
+                    value={formData.phoneNumber}
+                    onChange={(e) =>
+                      setFormData({ ...formData, phoneNumber: e.target.value })
+                    }
+                    addonBefore={prefixSelector}
+                    style={{
+                      width: "100%",
+                    }}
+                  />
+                </Form.Item>
+                <Form.Item
+                  label="Email Address"
+                  rules={[{ required: true, type: "email" }]}
+                >
+                  <Input
+                    value={formData.email}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
+                    required
+                    type="email-address"
+                  />
+                </Form.Item>
+                <Form.Item label="Is Active" valuePropName="checked">
+                  <Switch />
+                </Form.Item>
+                <Form.Item>
+                  <div
+                    style={{
+                      gap: 10,
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "flex-end",
+                      alignItems: "center",
+                      width: "100%",
+                    }}
+                  >
+                    <Button type="primary" htmlType="submit">
+                      Save
+                    </Button>
+                    <Button type="default" onClick={() => setEdit(false)}>
+                      Cancel
+                    </Button>
+                  </div>
+                </Form.Item>
+              </Form>
+            </Drawer>
+          </Space>
+        </Content>
+        <Footer style={{ textAlign: "center" }} className="footer">
+          Copyrights © 2023 <strong>Sixwheels</strong>. All rights reserved
+        </Footer>
+      </Layout>
+    </Layout>
   );
 }
 
