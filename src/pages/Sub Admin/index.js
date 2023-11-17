@@ -12,6 +12,8 @@ import {
   Layout,
   Menu,
   Image,
+  Divider,
+  Dropdown,
 } from "antd";
 import ButtonGroup from "antd/es/button/button-group";
 import { useEffect, useReducer, useState } from "react";
@@ -20,7 +22,7 @@ import { MdOutlineDeleteOutline } from "react-icons/md";
 import { AiOutlinePlus } from "react-icons/ai";
 import { Option } from "antd/es/mentions";
 import axios from "axios";
-import { Content, Footer } from "antd/es/layout/layout";
+import { Content, Footer, Header } from "antd/es/layout/layout";
 import MainHeader from "../../components/MainHeader";
 import Sider from "antd/es/layout/Sider";
 import { useNavigate } from "react-router-dom";
@@ -33,6 +35,9 @@ import { FaTruckFast } from "react-icons/fa6";
 import { RiCustomerService2Line, RiAdvertisementLine } from "react-icons/ri";
 import { TbReportSearch } from "react-icons/tb";
 import { FiSettings } from "react-icons/fi";
+import { GiHamburgerMenu } from "react-icons/gi";
+import { LeftOutlined } from "@ant-design/icons";
+import { DownOutlined } from "@ant-design/icons";
 
 function SubAdmin() {
   const [loading, setLoading] = useState(false);
@@ -175,6 +180,14 @@ function SubAdmin() {
     fetchData();
   }, [ignored]); // The empty dependency array ensures this runs only once.
 
+  const handleLogout = () => {
+    localStorage.setItem("login", "");
+    localStorage.setItem("loginStatus", "Logged out successfully!");
+    navigate("/");
+  };
+
+  const user = localStorage.getItem("user");
+
   return (
     <Layout className="container">
       <Sider
@@ -274,7 +287,58 @@ function SubAdmin() {
         />
       </Sider>
       <Layout>
-        <MainHeader />
+        <Header
+          className="header"
+          style={{
+            padding: 10,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            width: "100%",
+          }}
+        >
+          <Button
+            type="text"
+            icon={collapsed ? <GiHamburgerMenu /> : <LeftOutlined />}
+            onClick={() => setCollapsed(!collapsed)}
+            style={{
+              fontSize: "16px",
+              width: 64,
+              height: 64,
+            }}
+          />
+          <Dropdown
+            // menu={{
+            //   items,
+            // }}
+            dropdownRender={(menu) => (
+              <div>
+                {/* {React.cloneElement(menu)} */}
+                <Divider
+                  style={{
+                    margin: 0,
+                  }}
+                />
+                <Space
+                  style={{
+                    padding: 8,
+                  }}
+                >
+                  <Button type="primary" danger onClick={handleLogout}>
+                    Logout
+                  </Button>
+                </Space>
+              </div>
+            )}
+          >
+            {/* <a onClick={(e) => e.preventDefault()}> */}
+            <Space>
+              {user}
+              <DownOutlined />
+            </Space>
+            {/* </a> */}
+          </Dropdown>
+        </Header>
         <Content className="content">
           <Space size={20} direction="vertical">
             <Typography.Title level={4}>Sub Admin</Typography.Title>
