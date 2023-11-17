@@ -15,7 +15,7 @@ const App = () => {
   useEffect(() => {
     let login = localStorage.getItem("login");
     if (login) {
-      navigate("/");
+      navigate("/dashboard");
     }
     let loginStatus = localStorage.getItem("loginStatus");
     if (loginStatus) {
@@ -55,7 +55,7 @@ const App = () => {
         // Store the access token in localStorage
         localStorage.setItem("login", true);
         localStorage.setItem("user", user);
-        navigate("/");
+        navigate("/dashboard");
         setLogin(false);
       }
     } catch (error) {

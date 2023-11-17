@@ -44,13 +44,13 @@ function App() {
         <Menu
           style={{ backgroundColor: "#35A8DF", color: "white" }}
           mode="inline"
-          defaultSelectedKeys={["/"]}
+          defaultSelectedKeys={["/dashboard"]}
           onClick={(item) => {
             navigate(item.key);
           }}
           items={[
             {
-              key: "/",
+              key: "/dashboard",
               icon: <BiHomeAlt2 />,
               label: "Dashboard",
             },

@@ -51,7 +51,7 @@ function LiveOrders() {
           }}
           items={[
             {
-              key: "/",
+              key: "/dashboard",
               icon: <BiHomeAlt2 />,
               label: "Dashboard",
             },

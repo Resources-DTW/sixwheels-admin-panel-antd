@@ -13,7 +13,7 @@ export default function MainHeader() {
   const handleLogout = () => {
     localStorage.setItem("login", "");
     localStorage.setItem("loginStatus", "Logged out successfully!");
-    navigate("/admin");
+    navigate("/");
   };
 
   const user = localStorage.getItem("user");

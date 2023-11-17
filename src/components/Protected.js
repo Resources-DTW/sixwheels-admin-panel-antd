@@ -9,7 +9,7 @@ export default function Protected(props) {
     let login = localStorage.getItem("login");
     if (!login) {
       localStorage.setItem("loginStatus", "Please login to view dashboard!");
-      navigate("/admin", { replace: true });
+      navigate("/", { replace: true });
     }
   }, []);
 

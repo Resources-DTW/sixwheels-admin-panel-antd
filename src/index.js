@@ -31,8 +31,8 @@ root.render(
         }}
       >
         <Routes>
-          <Route path="/admin" element={<Login />} />
-          <Route path="/" element={<Protected Component={App} />} />
+          <Route path="/" element={<Login />} />
+          <Route path="/dashboard" element={<Protected Component={App} />} />
           <Route
             path="/sub_admin"
             element={<Protected Component={SubAdmin} />}
