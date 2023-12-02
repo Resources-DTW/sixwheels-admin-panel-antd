@@ -80,7 +80,7 @@ const App = () => {
         margin: -10,
       }}
     >
-      <Card style={{ width: 500 }}>
+      <Card style={{ width: 400 }}>
         <div style={{ display: "flex", justifyContent: "center", margin: 20 }}>
           <Image src={Logo} width={120} preview={false} />
         </div>
